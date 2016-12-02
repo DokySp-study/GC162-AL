@@ -1,95 +1,138 @@
 package GUI;
 
-
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class Remote extends JFrame{
-	
-	JFrame frmRemote;
-	GridBagConstraints gbc;
-	Insets iss;
-	ArrayList<JButton> btnFList;
 
+public class Remote extends Thread{
+	public JFrame frm = new JFrame("Remote");
+	public JPanel pnl = new JPanel();
+	public JButton btn1f = new JButton();
+	public JButton btn2f = new JButton(); 
+	public JButton btn3f = new JButton(); 
+	public JButton btn4f = new JButton(); 
+	public JButton btn5f = new JButton(); 
+	public JButton btn6f = new JButton(); 
+	public int nEndFlr;
+	public boolean bChoice;
+	public JFrame GetRemote() {
+		return this.frm;
+	}
 	
-	public Remote(int idxHum, int idxStdFloor)
-	{
-		Font fNanum = new Font("³ª´®¹Ù¸¥°íµñ UltraLight", Font.PLAIN, 15);
-		Font fDot = new Font("Power Pixel-7", Font.BOLD, 20);
-		iss = new Insets(20, 30, 40, 10);
-		gbc = new GridBagConstraints();
-		gbc.fill = gbc.VERTICAL;
-		gbc.insets = iss;
-		btnFList = new ArrayList<JButton>();
+	public Remote() {
+		frm = new JFrame("Remote");
+		JLabel lblTitle = new JLabel(new ImageIcon("rmtTitle.png"));
 		
-		gbc.weightx = 0.5;
-		frmRemote = new JFrame("Remote");
-		frmRemote.setBounds(1480, 250, 400, 400);
-		frmRemote.setLayout(new GridBagLayout());
+		frm.setBounds(800, 100, 300, 300);
+		frm.setLayout(new BorderLayout());
+	
+		//title
+		frm.add(lblTitle, "North");
+		frm.add(pnl, "Center");
 		
-		JPanel pnl1 = new JPanel();
+		//button
+		AddBtn();
+			
+		bChoice = false;
+	}
+	
+	public void AddBtn() {
+		pnl.setLayout(new GridBagLayout());
+		pnl.setBackground(Color.white);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = gbc.BOTH;
+		gbc.weighty = 1.0; gbc.weightx = 1.0;
+		
+		//action
+		ActionListener actionHandler = new ActionEventHandler();
+		
 		gbc.gridx = 0; gbc.gridy = 0;
-		gbc.weighty = 0.1;
+		btn1f.setIcon(new ImageIcon("btnf1.png"));
+		btn1f.setBorderPainted(false);
+		btn1f.setContentAreaFilled(false);
+		btn1f.setFocusPainted(false);
+		pnl.add(btn1f, gbc);
 		
-		frmRemote.add(pnl1, gbc);
-
-		JLabel lblTitle = new JLabel("Remote Controller");
-		lblTitle.setFont(fDot);
-		pnl1.add(lblTitle);
 		
-		JPanel pnl2 = new JPanel();
+		gbc.gridx = 1; gbc.gridy = 0;
+		pnl.add(btn2f, gbc); 
+		btn2f.setIcon(new ImageIcon("btnf2.png"));
+		btn2f.setBorderPainted(false);
+		btn2f.setContentAreaFilled(false);
+		btn2f.setFocusPainted(false);
+		
+		
+		gbc.gridx = 2; gbc.gridy = 0;
+		pnl.add(btn3f, gbc);
+		btn3f.setIcon(new ImageIcon("btnf3.png"));
+		btn3f.setBorderPainted(false);
+		btn3f.setContentAreaFilled(false);
+		btn3f.setFocusPainted(false);
+		
 		gbc.gridx = 0; gbc.gridy = 1;
-		gbc.weighty = 0.9;
-		frmRemote.add(pnl2, gbc);
-		pnl2.setLayout(new GridLayout(2, 4, 10, 10));	
+		pnl.add(btn4f, gbc); 
+		btn4f.setIcon(new ImageIcon("btnf4.png"));
+		btn4f.setBorderPainted(false);
+		btn4f.setContentAreaFilled(false);
+		btn4f.setFocusPainted(false);
 		
-		JButton btnFlr1 = new JButton(new ImageIcon("btnf1.png"));
-		btnFlr1.setBorderPainted(false); btnFlr1.setContentAreaFilled(false);
-		btnFlr1.setFocusPainted(false); btnFlr1.setOpaque(false);
+		gbc.gridx = 1; gbc.gridy = 1;
+		pnl.add(btn5f, gbc); 
+		btn5f.setIcon(new ImageIcon("btnf5.png"));
+		btn5f.setBorderPainted(false);
+		btn5f.setContentAreaFilled(false);
+		btn5f.setFocusPainted(false);
 		
-		JButton btnFlr2 = new JButton(new ImageIcon("btnf2.png")); 
-		btnFlr2.setBorderPainted(false); btnFlr2.setContentAreaFilled(false);
-		btnFlr2.setFocusPainted(false); btnFlr2.setOpaque(false);
+		gbc.gridx = 2; gbc.gridy = 1;
+		pnl.add(btn6f, gbc);
+		btn6f.setIcon(new ImageIcon("btnf6.png"));
+		btn6f.setBorderPainted(false);
+		btn6f.setContentAreaFilled(false);
+		btn6f.setFocusPainted(false);
 		
-		JButton btnFlr3 = new JButton(new ImageIcon("btnf3.png")); 
-		btnFlr3.setBorderPainted(false); btnFlr3.setContentAreaFilled(false);
-		btnFlr3.setFocusPainted(false); btnFlr3.setOpaque(false);
+		btn1f.addActionListener(actionHandler);
+		btn2f.addActionListener(actionHandler);
+		btn3f.addActionListener(actionHandler);
+		btn4f.addActionListener(actionHandler);
+		btn5f.addActionListener(actionHandler);
+		btn6f.addActionListener(actionHandler);
+	}
+	
+	class ActionEventHandler implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+			if(e.getSource() == btn1f) {
+				nEndFlr = 1;
+			} else if(e.getSource() == btn2f) {
+				nEndFlr = 2;
+			} else if(e.getSource() == btn3f) {
+				nEndFlr = 3;
+			} else if(e.getSource() == btn4f) {
+				nEndFlr = 4;
+			} else if(e.getSource() == btn5f) {
+				nEndFlr = 5;
+			} else if(e.getSource() == btn6f) {
+				nEndFlr = 6;
+			}
+			
+			bChoice = true;
+		}
 		
-		JButton btnFlr4 = new JButton(new ImageIcon("btnf4.png")); 
-		btnFlr4.setBorderPainted(false); btnFlr4.setContentAreaFilled(false);
-		btnFlr4.setFocusPainted(false); btnFlr4.setOpaque(false);
-		
-		JButton btnFlr5 = new JButton(new ImageIcon("btnf5.png")); 
-		btnFlr5.setBorderPainted(false); btnFlr5.setContentAreaFilled(false);
-		btnFlr5.setFocusPainted(false); btnFlr5.setOpaque(false);
-		
-		JButton btnFlr6 = new JButton(new ImageIcon("btnf6.png")); 
-		btnFlr6.setBorderPainted(false); btnFlr6.setContentAreaFilled(false);
-		btnFlr6.setFocusPainted(false); btnFlr6.setOpaque(false);
-		
-		JButton btnFlr7 = new JButton(new ImageIcon("btnf7.png")); 
-		btnFlr7.setBorderPainted(false); btnFlr7.setContentAreaFilled(false);
-		btnFlr7.setFocusPainted(false); btnFlr7.setOpaque(false);
-		
-		JButton btnFlr8 = new JButton(new ImageIcon("btnf8.png")); 
-		btnFlr8.setBorderPainted(false); btnFlr8.setContentAreaFilled(false);
-		btnFlr8.setFocusPainted(false); btnFlr8.setOpaque(false);
-		
-		btnFList.add(btnFlr1); btnFList.add(btnFlr2); btnFList.add(btnFlr3); btnFList.add(btnFlr4); 
-		btnFList.add(btnFlr5); btnFList.add(btnFlr6); btnFList.add(btnFlr7); btnFList.add(btnFlr8);
-		
-		pnl2.add(btnFlr1); pnl2.add(btnFlr2); pnl2.add(btnFlr3); pnl2.add(btnFlr4);
-		pnl2.add(btnFlr5); pnl2.add(btnFlr6); pnl2.add(btnFlr7); pnl2.add(btnFlr8);
-		
-		frmRemote.getContentPane().setBackground(Color.WHITE);
-		pnl1.setBackground(Color.WHITE);
-		pnl2.setBackground(Color.WHITE);
-		
-		frmRemote.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		frmRemote.setVisible(true);
+	}
+	
+	public int GetFlr(){
+		return this.nEndFlr;
+	}
+	
+	public JFrame GetFrm() {
+		return this.frm;
 	}
 	
 }
-
