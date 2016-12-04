@@ -42,7 +42,7 @@ public class Window extends Thread{
 		JPanel pnl = new JPanel();
 
 		//listFloorY √ ±‚»≠
-		for(int i=0; i<5; i++)
+		for(int i=0; i<6; i++)
 			listFloorY.add(610 - nBt*i);
 
 		//add elev
@@ -137,11 +137,13 @@ public class Window extends Thread{
 
 				public void run() {
 					// TODO Auto-generated method stub
-					Humans h = new Humans();
-					Elevators ev;
-					if(e.getSource() == btnf1) {
+					try {
+						Humans h = new Humans();
+						Elevators ev;
+						
+						
+						if(e.getSource() == btnf1) {
 
-						try {
 							ev = elev1;
 
 							h.SetSflr(1);
@@ -166,7 +168,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -174,7 +176,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -184,14 +186,14 @@ public class Window extends Thread{
 							//ªÁ∂˜ ≥ª∏≤
 							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
 
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
 
-					} else if(e.getSource() == btnf2) {
-						try {
+
+						} else if(e.getSource() == btnf2) {
 							ev = elev3;
 
 							h.SetSflr(2);
@@ -216,7 +218,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -224,7 +226,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -232,17 +234,14 @@ public class Window extends Thread{
 							ev.join();
 
 							//ªÁ∂˜ ≥ª∏≤
-							h.MoveSetting(1, ev.GetLblElev().getLocation().x);
+							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
 
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-
-
-					} else if(e.getSource() == btnf3) {
-						try {
+						} else if(e.getSource() == btnf3) {
 							ev = elev1;
 
 							h.SetSflr(3);
@@ -267,7 +266,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -275,7 +274,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -283,18 +282,15 @@ public class Window extends Thread{
 							ev.join();
 
 							//ªÁ∂˜ ≥ª∏≤
-							h.MoveSetting(1, ev.GetLblElev().getLocation().x);
+							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
 
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-
-
-					} else if(e.getSource() == btnf4) {
-						try {
-							ev = elev3;
+						} else if(e.getSource() == btnf4) {
+							ev = elev1;
 
 							h.SetSflr(4);
 							h.GetLblHum().setBounds(80, h.y, 63, 90);
@@ -318,7 +314,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -326,7 +322,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -334,18 +330,14 @@ public class Window extends Thread{
 							ev.join();
 
 							//ªÁ∂˜ ≥ª∏≤
-							h.MoveSetting(1, ev.GetLblElev().getLocation().x);
+							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
-
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-
-
-					} else if(e.getSource() == btnf5) {
-						try {
-							ev = elev1;
+						} else if(e.getSource() == btnf5) {
+							ev = elev2;
 
 							h.SetSflr(5);
 							h.GetLblHum().setBounds(80, h.y, 63, 90);
@@ -369,7 +361,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -377,7 +369,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -385,18 +377,15 @@ public class Window extends Thread{
 							ev.join();
 
 							//ªÁ∂˜ ≥ª∏≤
-							h.MoveSetting(1, ev.GetLblElev().getLocation().x);
+							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
 
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-
-
-					} else if(e.getSource() == btnf6) {
-						try {
-							ev = elev2;
+						} else if(e.getSource() == btnf6) {
+							ev = elev1;
 
 							h.SetSflr(6);
 							h.GetLblHum().setBounds(80, h.y, 63, 90);
@@ -420,7 +409,7 @@ public class Window extends Thread{
 							ev.join();
 
 							//ø§∫£ ø√∂Û∞® (listFloorY ªÁøÎ)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(1));
+							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
 							ev.run();
 							ev.join();
 
@@ -428,7 +417,7 @@ public class Window extends Thread{
 							ev.MoveSetting(0);
 							ev.run();
 							ev.join();
-							h.GetLblHum().setVisible(true);
+
 
 							//ø§∫£ πÆ ¥›»˚
 							ev.MoveSetting(1);
@@ -436,17 +425,17 @@ public class Window extends Thread{
 							ev.join();
 
 							//ªÁ∂˜ ≥ª∏≤
-							h.MoveSetting(1, ev.GetLblElev().getLocation().x);
+							h.MoveSetting(1, ev.GetLblElev().getLocation());
 							h.run();
+							h.GetLblHum().setVisible(true);
+							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+							frmMain.add(h.GetLblHum(), "Center");
 
-
-						}catch (InterruptedException e1) {
-							e1.printStackTrace();
 						}
-
+						frmMain.add(h.GetLblHum());
+					}catch (InterruptedException e1) {
+						e1.printStackTrace();
 					}
-					frmMain.add(h.GetLblHum());
-
 				}
 			});
 			t.start();

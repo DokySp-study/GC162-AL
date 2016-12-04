@@ -133,6 +133,7 @@ public class Humans extends Thread{
 					Thread.sleep(200);
 				}
 
+				nEflr = rmt.nEflr - 1;
 				frmRmt.dispose();
 
 				//Àá½Ã ´ë±â
@@ -181,7 +182,7 @@ public class Humans extends Thread{
 			//p = lblHum.getLocation();
 			//lblHum.setLocation(p.x-20, 610-nEflr*nBt);
 			
-			lblHum.setLocation(610, 610-nEflr*nBt);
+			//lblHum.setLocation(610, 610-nEflr*nBt);
 			
 			//°ð »ç¶óÁú²¨
 			lblHum.setBackground(Color.WHITE);
