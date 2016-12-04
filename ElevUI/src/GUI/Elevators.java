@@ -72,7 +72,8 @@ public class Elevators extends Thread{
 	public void MoveSetting(int i) {
 		idxRun = i;
 	}
-
+	
+	
 	//¿Ãµø
 	public void MoveSetting(int i, int sflr, int eflr) {
 		idxRun = i;
