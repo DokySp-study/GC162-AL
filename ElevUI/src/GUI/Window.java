@@ -1,6 +1,8 @@
 package GUI;
 
 import javax.swing.*;
+
+import System.EQ;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +17,14 @@ public class Window extends Thread{
 	public JButton btnf1, btnf2, btnf3, btnf4, btnf5, btnf6;
 
 	//엘리베이터
-	public Elevators elev1 = new Elevators(1);
-	public Elevators elev2 = new Elevators(2);
-	public Elevators elev3 = new Elevators(3);
+	public static Elevators elev1 = new Elevators(1);
+	public static Elevators elev2 = new Elevators(2);
+	public static Elevators elev3 = new Elevators(3);
+
+	//큐
+	public static EQ q1 = new EQ(1);
+	public static EQ q2 = new EQ(2);
+	public static EQ q3 = new EQ(3);
 
 	//각 층의 위치 (엘리베이터 이동 편하게하라고)
 	public ArrayList<Integer> listFloorY = new ArrayList<Integer>();
@@ -69,6 +76,11 @@ public class Window extends Thread{
 
 		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMain.setVisible(true);
+
+		q1.start();
+		q2.start();
+		q3.start();
+
 	}
 
 	public void AddBtn() {
@@ -137,305 +149,117 @@ public class Window extends Thread{
 
 				public void run() {
 					// TODO Auto-generated method stub
+					//일단 사람의 객체는 생성한다
+					Humans h = new Humans();
+					Elevators ev;
+					int PosY;
+
 					try {
-						Humans h = new Humans();
-						Elevators ev;
-						
-						
 						if(e.getSource() == btnf1) {
 
-							ev = elev1;
-
-							h.SetSflr(1);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
+							//사람 생성&위치 조정
+							PosY = h.GetFlrPosY(1);
+							h.GetLblHum().setBounds(80, PosY, 63, 90);
 							frmMain.add(h.GetLblHum(), "Center");
+							h.SetStartFlr(1);
 
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
+							//리모컨-갈 층 선택
+							h.MoveSetting(1);
 							h.run();
 							h.join();
-							h.GetLblHum().setVisible(false);
 
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
+							//엘베 추가
+							if(h.idxElev == 1) {
+								ev = elev1;
+							}else if(h.idxElev == 2) {
+								ev = elev2;
+							}else {
+								ev = elev3;
+							}
+							System.out.println("AAA");
+							//엘베 앞까지 이동
+							while(true) {
+								System.out.println("BBB");
+								if(ev.nNowflr == h.nSflr) {
+									System.out.println("CCC");
+									System.out.println(">>엘베 앞까지 이동");
+									h.MoveSetting(2, ev.GetLblElev().getLocation().x);
+									h.run();
+									h.join();
+									break;
+								}
+								
+							}
+							System.out.println("DDD");
+							/*
+							while(true) {
+								if(ev.GetLblElev().getLocation().y == PosY) {
+									System.out.println(">>엘베 앞까지 이동");
+									h.MoveSetting(2, ev.GetLblElev().getLocation().x);
+									h.run();
+									h.join();
+									break;
+								}
+							}*/
 
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
+							/*
+							//엘베 탄다
+							while(true) {
+								if(ev.bOpen && ev.bTsn) {
+									//transaction이 끝나고 
+									//엘베가 열리면!
+									System.out.println(">>엘베 탄다");
+									h.GetLblHum().setVisible(false);
+									break;
+								}
+							}
 
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
+							//기다리지를 않는다
+							//바로 내린다
 
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
-
+							//엘베가 움직임이 멈추면
+							while(!ev.bMove) {
+								Thread.sleep(100);
+								if(!ev.bMove && ev.bOpen) {
+									System.out.println(">>대기끝");
+									break;
+								}
+							}
+							 */
+							//엘리베이터의 높이가 내가 내릴층과 같다면
+							/*
+							while(true) {
+								System.out.print(". ");
+								if(ev.nNowflr == h.nEflr && ev.bOpen) {
+									//엘베 내린다
+									System.out.println(">>엘리베이터의 높이가 내가 내릴층과 같으므로 내린다");
+									h.MoveSetting(3);
+									h.run();
+									h.join();
+									h.GetLblHum().setVisible(true);
+									h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
+									frmMain.add(h.GetLblHum(), "Center");
+									break;
+								}
+							}*/
 
 
 
 						} else if(e.getSource() == btnf2) {
-							ev = elev3;
-
-							h.SetSflr(2);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
-							frmMain.add(h.GetLblHum(), "Center");
-
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
-							h.run();
-							h.join();
-							h.GetLblHum().setVisible(false);
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
-
 
 						} else if(e.getSource() == btnf3) {
-							ev = elev1;
-
-							h.SetSflr(3);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
-							frmMain.add(h.GetLblHum(), "Center");
-
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
-							h.run();
-							h.join();
-							h.GetLblHum().setVisible(false);
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
-
 
 						} else if(e.getSource() == btnf4) {
-							ev = elev1;
-
-							h.SetSflr(4);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
-							frmMain.add(h.GetLblHum(), "Center");
-
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
-							h.run();
-							h.join();
-							h.GetLblHum().setVisible(false);
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
 
 						} else if(e.getSource() == btnf5) {
-							ev = elev2;
-
-							h.SetSflr(5);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
-							frmMain.add(h.GetLblHum(), "Center");
-
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
-							h.run();
-							h.join();
-							h.GetLblHum().setVisible(false);
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
-
 
 						} else if(e.getSource() == btnf6) {
-							ev = elev1;
 
-							h.SetSflr(6);
-							h.GetLblHum().setBounds(80, h.y, 63, 90);
-
-							frmMain.add(h.GetLblHum(), "Center");
-
-							//사람이 이동
-							h.MoveSetting(0, ev.GetLblElev().getLocation().x);
-							h.run();
-							h.join();
-							h.GetLblHum().setVisible(false);
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//엘베 올라감 (listFloorY 사용)
-							ev.MoveSetting(2, listFloorY.get(0), listFloorY.get(h.nEflr));
-							ev.run();
-							ev.join();
-
-							//엘베 문 열림
-							ev.MoveSetting(0);
-							ev.run();
-							ev.join();
-
-
-							//엘베 문 닫힘
-							ev.MoveSetting(1);
-							ev.run();
-							ev.join();
-
-							//사람 내림
-							h.MoveSetting(1, ev.GetLblElev().getLocation());
-							h.run();
-							h.GetLblHum().setVisible(true);
-							h.GetLblHum().setBounds(ev.GetLblElev().getLocation().x-100, listFloorY.get(h.nEflr)+10, 63, 90);
-							frmMain.add(h.GetLblHum(), "Center");
-
-						}
-						frmMain.add(h.GetLblHum());
-					}catch (InterruptedException e1) {
-						e1.printStackTrace();
+						} 
+					}catch(InterruptedException e) {
+						e.printStackTrace();
 					}
+
 				}
 			});
 			t.start();
