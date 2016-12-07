@@ -74,8 +74,6 @@ public class Humans extends Thread{
 
 		lblHum.setIcon(icnMove);
 
-		System.out.print("Create human "+strTemp);
-
 		idxKeyChoice ++;
 		this.idxUnique = idxKeyChoice;
 	}
@@ -84,7 +82,6 @@ public class Humans extends Thread{
 	public void SetStartFlr(int n) {
 
 		nSflr = n;
-		System.out.println("[h]Set floor "+nSflr);
 	}
 
 	//case마다 함수를 따로두는건 어때? 오버라이딩?
@@ -156,16 +153,16 @@ public class Humans extends Thread{
 				//해당 index에 맞는 엘리베이터의 큐에 추가해준다
 				if(idxElev == 1) { //elev1
 					System.out.print("\n>>q1: ");
-					Window.q1.Add(nEflr-1);
+					Window.q1.Add(nEflr);
 					
 					
 				}else if(idxElev == 2) { //elev2
 					System.out.print("\n>>q2: ");
-					Window.q2.Add(nEflr-1);
+					Window.q2.Add(nEflr);
 					
 				}else if(idxElev == 3) { //elev3
 					System.out.print("\n>>q3: ");
-					Window.q3.Add(nEflr-1);
+					Window.q3.Add(nEflr);
 					
 				}
 				System.out.println(">>"+nEflr+" 까지 이동");
@@ -193,7 +190,7 @@ public class Humans extends Thread{
 		//필요한 변수: idx(2), ev의 좌표
 		case 2:
 			try{
-				System.out.print(">>Human"+lblHum.getLocation().x+", Elev: ");
+				System.out.print(">>[h.case2]Human"+lblHum.getLocation().x+", Elev: ");
 				System.out.println(nElevPosX);
 				//이어서 움직임
 				lblHum.setIcon(icnMove);
@@ -202,8 +199,7 @@ public class Humans extends Thread{
 					Thread.sleep(200);
 					p = lblHum.getLocation(); //
 					lblHum.setLocation(p.x+20, p.y);
-					if(nElevPosX < p.x){
-						
+					if(nElevPosX > p.x){
 						p = lblHum.getLocation();
 					}
 
@@ -226,7 +222,8 @@ public class Humans extends Thread{
 			}
 			break;
 
-			//엘리베이터에서 내린다
+			
+		//엘리베이터에서 내린다
 		case 3:
 			//곧 사라질꺼
 			lblHum.setBackground(Color.WHITE);
@@ -254,6 +251,7 @@ public class Humans extends Thread{
 		int i;
 		for(i=1; i<flr; i++)
 			height -= this.nBt;
+		System.out.println(">>height: "+height);
 		return height;
 	}
 

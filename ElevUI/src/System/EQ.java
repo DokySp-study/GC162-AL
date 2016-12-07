@@ -42,27 +42,27 @@ public class EQ extends Thread { //EQ == elevator queue
 
 						//열림
 						Window.elev1.MoveSetting(1);
-						Window.elev1.start();
+						Window.elev1.run();
 						Window.elev1.join();
 
 						//닫힘
 						Window.elev1.MoveSetting(2);
-						Window.elev1.start();
+						Window.elev1.run();
 						Window.elev1.join();
 
 						//움직임
 						Window.elev1.MoveSetting(3, Window.elev1.nNowflr, Window.q1.list.remove());
-						Window.elev1.start();
+						Window.elev1.run();
 						Window.elev1.join();
 
 						//열림
 						Window.elev1.MoveSetting(1);
-						Window.elev1.start();
+						Window.elev1.run();
 						Window.elev1.join();
 
 						//닫힘
 						Window.elev1.MoveSetting(2);
-						Window.elev1.start();
+						Window.elev1.run();
 						Window.elev1.join();
 
 						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
@@ -83,27 +83,27 @@ public class EQ extends Thread { //EQ == elevator queue
 
 						//열림
 						Window.elev2.MoveSetting(1);
-						Window.elev2.start();
+						Window.elev2.run();
 						Window.elev2.join();
 
 						//닫힘
 						Window.elev2.MoveSetting(2);
-						Window.elev2.start();
+						Window.elev2.run();
 						Window.elev2.join();
 
 						//움직임
 						Window.elev2.MoveSetting(3, Window.elev2.nNowflr, Window.q2.list.remove());
-						Window.elev2.start();
+						Window.elev2.run();
 						Window.elev2.join();
 
 						//열림
 						Window.elev2.MoveSetting(1);
-						Window.elev2.start();
+						Window.elev2.run();
 						Window.elev2.join();
 
 						//닫힘
 						Window.elev2.MoveSetting(2);
-						Window.elev2.start();
+						Window.elev2.run();
 						Window.elev2.join();
 
 						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
@@ -123,27 +123,27 @@ public class EQ extends Thread { //EQ == elevator queue
 						System.out.println(">>Q3 size over 1");
 						//열림
 						Window.elev3.MoveSetting(1);
-						Window.elev3.start();
+						Window.elev3.run();
 						Window.elev3.join();
 
 						//닫힘
 						Window.elev3.MoveSetting(2);
-						Window.elev3.start();
+						Window.elev3.run();
 						Window.elev3.join();
 
 						//움직임
 						Window.elev3.MoveSetting(3, Window.elev3.nNowflr, Window.q3.list.remove());
-						Window.elev3.start();
+						Window.elev3.run();
 						Window.elev3.join();
 
 						//열림
 						Window.elev3.MoveSetting(1);
-						Window.elev3.start();
+						Window.elev3.run();
 						Window.elev3.join();
 
 						//닫힘
 						Window.elev3.MoveSetting(2);
-						Window.elev3.start();
+						Window.elev3.run();
 						Window.elev3.join();
 
 						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
@@ -167,7 +167,7 @@ public class EQ extends Thread { //EQ == elevator queue
 	public void Add(int i) {
 		System.out.println("[Add] "+i);
 		this.list.add(i);
-		this.start();
+		//this.start();
 	}
 
 	public int Remove() {

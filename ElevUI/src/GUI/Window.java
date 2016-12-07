@@ -161,13 +161,15 @@ public class Window extends Thread{
 							PosY = h.GetFlrPosY(1);
 							h.GetLblHum().setBounds(80, PosY, 63, 90);
 							frmMain.add(h.GetLblHum(), "Center");
-							h.SetStartFlr(1);
+							h.SetStartFlr(0);
 
+							
 							//리모컨-갈 층 선택
 							h.MoveSetting(1);
 							h.run();
 							h.join();
 
+							
 							//엘베 추가
 							if(h.idxElev == 1) {
 								ev = elev1;
@@ -176,13 +178,11 @@ public class Window extends Thread{
 							}else {
 								ev = elev3;
 							}
+							
 							System.out.println("AAA");
 							//엘베 앞까지 이동
 							while(true) {
-								System.out.println("BBB");
 								if(ev.nNowflr == h.nSflr) {
-									System.out.println("CCC");
-									System.out.println(">>엘베 앞까지 이동");
 									h.MoveSetting(2, ev.GetLblElev().getLocation().x);
 									h.run();
 									h.join();
@@ -190,8 +190,10 @@ public class Window extends Thread{
 								}
 								
 							}
-							System.out.println("DDD");
-							/*
+
+							
+							
+							System.out.println("BBB");
 							while(true) {
 								if(ev.GetLblElev().getLocation().y == PosY) {
 									System.out.println(">>엘베 앞까지 이동");
@@ -200,10 +202,11 @@ public class Window extends Thread{
 									h.join();
 									break;
 								}
-							}*/
+							}
 
-							/*
+							
 							//엘베 탄다
+							System.out.println("CCC");
 							while(true) {
 								if(ev.bOpen && ev.bTsn) {
 									//transaction이 끝나고 
@@ -225,9 +228,9 @@ public class Window extends Thread{
 									break;
 								}
 							}
-							 */
+							 
 							//엘리베이터의 높이가 내가 내릴층과 같다면
-							/*
+							
 							while(true) {
 								System.out.print(". ");
 								if(ev.nNowflr == h.nEflr && ev.bOpen) {
@@ -241,7 +244,7 @@ public class Window extends Thread{
 									frmMain.add(h.GetLblHum(), "Center");
 									break;
 								}
-							}*/
+							}
 
 
 

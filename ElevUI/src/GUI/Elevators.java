@@ -67,6 +67,8 @@ public class Elevators extends Thread{
 		//listFloorY 초기화
 		for(int i=0; i<6; i++)
 			listFloorY.add(610 - nBt*i);
+		
+		nNowflr = 0;
 	}
 
 
@@ -153,6 +155,7 @@ public class Elevators extends Thread{
 
 					while(true) {
 						Thread.sleep(200);
+						nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
 						p = lblElev.getLocation();
 						if(p.y > nEflr) //내가 있는 위치가, 도착할 층보다 높다. (내려가야함)
 							lblElev.setLocation(p.x, p.y-10);
@@ -162,6 +165,7 @@ public class Elevators extends Thread{
 				} else { //저층(3) -> 고층(10)
 					while(true) {
 						Thread.sleep(200);
+						nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
 						p = lblElev.getLocation();
 						if(nEflr > p.y) //내가 있는 위치가, 도착할 층보다 적다. (올라가야함)
 							lblElev.setLocation(p.x, p.y+10);
