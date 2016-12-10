@@ -2,183 +2,420 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.logging.Handler;
+import java.util.LinkedList;
 
-public class Elevators extends Thread{
-	//¿¤º£ ÀÌ¹ÌÁö ¸®½ºÆ®
-	public ArrayList<ImageIcon> icnList = new ArrayList<ImageIcon>();
-
-	//¿¤º£°¡ ¿òÁ÷ÀÌ°í ÀÖ´ÂÁö
-	public boolean bMove = false;
+public class Elevators {
 	
-	//¿¤º£ Æ®·£Á§¼Ç
-	public boolean bTsn = false;
+	private final int LEV_INT = 119;
+	private final int LEV_FIRST = 610;
+	private final int LEV_LAST = 15;
+	public LinkedList<Integer> upQueue = new LinkedList<Integer>();
+	public LinkedList<Integer> downQueue = new LinkedList<Integer>();
+	private int currLevel;
+	private int weight;
+	private boolean isGoingUp;
 	
-	//¿¤º£ÀÇ ¹®ÀÌ ¿­·È´ÂÁö
-	public boolean bOpen = false;
-
 	//ElevLabel
-	JLabel lblElev = new JLabel("");
-
-	//MoveSetting & run
-	public int idxRun;
-
-	//floor start, end
-	public int nSflr, nEflr; //ÃşÀ¸·Î ¹Ş°í, listFloorY¸¦ ÀÌ¿ëÇØ¼­ ¹Ù²Û´Ù
-	public int nNowflr; //ÇöÀç Ãş
-
-	//elev move
-	public Point p;//ÇÊ¿äÇÒ±î?
-
-	//°¢ ÃşÀÇ À§Ä¡ (¿¤¸®º£ÀÌÅÍ ÀÌµ¿ ÆíÇÏ°ÔÇÏ¶ó°í)
-	public ArrayList<Integer> listFloorY = new ArrayList<Integer>();
-
-	//»çÀÌ °£°İ
-	public int nBt = 120;
-
-	public Elevators(int ID) {
-		switch(ID){
-		case 1:
-			icnList.add(new ImageIcon("elev1.png"));
-			icnList.add(new ImageIcon("elev1_o1.png"));
-			icnList.add(new ImageIcon("elev1_o2.png"));
-			icnList.add(new ImageIcon("elev1_o3.png"));
-			icnList.add(new ImageIcon("elev1_o4.png"));
-			break;
-		case 2:
-			icnList.add(new ImageIcon("elev2.png"));
-			icnList.add(new ImageIcon("elev2_o1.png"));
-			icnList.add(new ImageIcon("elev2_o2.png"));
-			icnList.add(new ImageIcon("elev2_o3.png"));
-			icnList.add(new ImageIcon("elev2_o4.png"));
-			break;
-		case 3:
-			icnList.add(new ImageIcon("elev3.png"));
-			icnList.add(new ImageIcon("elev3_o1.png"));
-			icnList.add(new ImageIcon("elev3_o2.png"));
-			icnList.add(new ImageIcon("elev3_o3.png"));
-			icnList.add(new ImageIcon("elev3_o4.png"));
-			break;
-		}
+	JLabel lblElev = new JLabel();
+	
+	public Elevators(){
+		lblElev.setIcon(new ImageIcon("elev3_o0.png"));
+		isGoingUp = true;
+		currLevel = 1;
 		
-		lblElev.setIcon(icnList.get(0));
-		
-		//listFloorY ÃÊ±âÈ­
-		for(int i=0; i<6; i++)
-			listFloorY.add(610 - nBt*i);
-		
-		nNowflr = 0;
 	}
+	
 
 
-	//¿¤¸®º£ÀÌÅÍ ¿ÀºêÁ§Æ® ÀÚÃ¼¸¦ ¸®ÅÏÇÑ´Ù
-	//°´Ã¼ ¸¸µé¾î³õ°í, runÀ¸·Î ¿òÁ÷ÀÌ°Ô¸¸ ÇÏÀÚ
-	public Elevators GetElev() {
-		return this;
-	}
-
-
-	//¿¤¸®º£ÀÌÅÍ labelÀ» ¸®ÅÏÇÑ´Ù
-	//¿¤¸®º£ÀÌÅÍ¸¦ main frame¿¡ º¸¿©ÁØ´Ù
 	public JLabel GetLblElev() {
 		return this.lblElev;
 	}
-
-
-	//runÀ» ÇÏ±â¿¡ ¾Õ¼­, ¸Å°³º¯¼ö¸¦ Àü´ŞÇÏ´Â ÇÔ¼ö
-	//¿­¸² ´İ±è - 1 2
-	public void MoveSetting(int i) {
-		idxRun = i;
+	
+	public void runCheckThd(){
+		new thdCheckList().start();
 	}
-
-
-	//ÀÌµ¿ - 3
-	public void MoveSetting(int i, int sflr, int eflr) {
-		idxRun = i;
-		//Ãş °ªÀ¸·Î ¹Ş¾ÒÀ¸´Ï, ÁÂÇ¥°ªÀ¸·Î ¹Ù²Ù¾îÁà¾ß ÇÑ´Ù
-		nSflr = sflr;
-		nEflr = eflr; //ÃşÀÌ´Ï±î y°ª¿¡ µû¶ó ÀÌµ¿ÇÏ°ÚÁö?
-		//movesetting¿¡¼­ runÀ» È£ÃâÇÏ¸é Àı´ë ¾ÈµÈ´Ù
-		
-		nSflr = listFloorY.get(sflr);
-		nEflr = listFloorY.get(eflr);
-		
+	public void runMoveThd(){
+		new thdMoveElev().start();
 	}
-
-
-	//0: open, 1: close, 2: move
-	//MoveSettingÀ» ¸ÕÀú ÇØÁà¾ßÇÑ´Ù
-	public void run() {
-
-		int i;
-		int time = 5;
-		try {
-			nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
-			System.out.println(">>nNowflr: "+nNowflr);
-			switch(idxRun) {
+	
+	
+	class thdMoveElev extends Thread {
+		
+		public void run(){
 			
-			//open
-			case 1:
-				System.out.println(">>Open elev");
-				bOpen = true;
-				bMove = false;
-				for(i=0; i<time; i++){
-					lblElev.setIcon(icnList.get(i));
-					Thread.sleep(200);
-				}
-				lblElev.setIcon(icnList.get(0));
-				break;
-
-
-			//close
-			case 2:
-				bOpen = false;
-				bMove = false;
-				System.out.println(">>Close elev");
-				for(i=0; i<time; i++){
-					lblElev.setIcon(icnList.get(time-1-i));
-					Thread.sleep(200);
-				}
-				lblElev.setIcon(icnList.get(0));
-				break;
-
-
-			//move
-			case 3:
-				bOpen = false;
-				bMove = true;
-				System.out.println(">>Move elev");
-				//bOpne À§¿¡¼­ ¼³Á¤ÇØ¢ZÀ¸´Ï ¾È°Çµå·Áµµ ¤·¤»
-				System.out.println(nSflr+", "+nEflr);
-				if(nSflr > nEflr) { //°íÃş(10) -> ÀúÃş(3)
-
-					while(true) {
-						Thread.sleep(200);
-						nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
-						p = lblElev.getLocation();
-						if(p.y > nEflr) //³»°¡ ÀÖ´Â À§Ä¡°¡, µµÂøÇÒ Ãşº¸´Ù ³ô´Ù. (³»·Á°¡¾ßÇÔ)
-							lblElev.setLocation(p.x, p.y-10);
-						else break;
+			try{
+				while(true){
+					
+					//ì˜¬ë¼ê°ˆ ë•Œ
+					if(isGoingUp){
+						int getNextLev;
+						if(upQueue.size() == 0)
+							continue;
+						
+						getNextLev = (int) upQueue.poll();
+						
+						while(true){
+							
+							if(getNextLev == currLevel){
+								openDoor();
+								System.out.println("door open");
+								Thread.sleep(1000);
+								//ì‚¬ëŒ íƒ‘ìŠ¹ ê¸°ë‹¤ë¦¬ëŠ” ë¶€ë¶„ 
+								
+								closeDoor();
+								System.out.println("door close");
+								
+								if(upQueue.size() == 0)
+									isGoingUp = false;
+								
+								break;
+							}
+							
+							Point p = lblElev.getLocation();
+							
+							if(isTouchMax(p.y)){
+								isGoingUp = false;
+								continue;
+							}
+							
+							for(int i = 0; i <= LEV_INT; i++){
+								lblElev.setLocation(p.x, p.y - i);
+									Thread.sleep(5);
+		
+							}
+							calcCurrLev();
+						
+						}
+						
+						
 					}
-
-				} else { //ÀúÃş(3) -> °íÃş(10)
-					while(true) {
-						Thread.sleep(200);
-						nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
-						p = lblElev.getLocation();
-						if(nEflr > p.y) //³»°¡ ÀÖ´Â À§Ä¡°¡, µµÂøÇÒ Ãşº¸´Ù Àû´Ù. (¿Ã¶ó°¡¾ßÇÔ)
-							lblElev.setLocation(p.x, p.y+10);
-						else break;;
+					
+					//ë‚´ë ¤ê°ˆ ë•Œ 
+					else{
+						int getNextLev;
+						if(downQueue.size() == 0)
+							continue;
+						
+						getNextLev = (int) downQueue.poll();
+						
+						while(true){
+							
+							if(getNextLev == currLevel){
+								openDoor();
+								System.out.println("door open");
+								Thread.sleep(1000);
+								//ì‚¬ëŒ íƒ‘ìŠ¹ ê¸°ë‹¤ë¦¬ëŠ” ë¶€ë¶„ 
+								
+								closeDoor();
+								System.out.println("door close");
+								
+								if(downQueue.size() == 0)
+									isGoingUp = false;
+								
+								break;
+							}
+							
+							Point p = lblElev.getLocation();
+							
+							if(isTouchMin(p.y)){
+								isGoingUp = true;
+								continue;
+							}
+							
+							for(int i = 0; i <= LEV_INT; i++){
+								lblElev.setLocation(p.x, p.y + i);
+									Thread.sleep(5);
+							}
+							calcCurrLev();
+						
+						}
+						
 					}
+					
 				}
-				break;
-
+				
+			} 
+			catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		} 
-		catch(Exception e) {
-			e.printStackTrace();
+			
+		}
+		
+		
+		
+		private boolean isTouchMax(int yLoc){
+			
+			if(yLoc == LEV_LAST)
+				return true;
+			return false;
+			
+		}
+		
+		private boolean isTouchMin(int yLoc){
+			
+			if(yLoc == LEV_FIRST)
+				return true;
+			return false;
+			
+		}
+		
+		
+		
+		private void openDoor(){
+			for(int i = 1; i <= 4; i++){
+				lblElev.setIcon(new ImageIcon("elev3_o"+i+".png"));
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		private void closeDoor(){
+			for(int i = 4; i >= 0; i--){
+				lblElev.setIcon(new ImageIcon("elev3_o"+i+".png"));
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	class thdCheckList extends Thread {
+		
+		public void run(){
+			while(true){
+				//System.out.println("Up queue");
+				for(int i = 0; i < upQueue.size(); i++){
+					upQueue.get(i);
+				}
+				
+				//System.out.println("Down queue");
+				for(int i = 0; i < downQueue.size(); i++){
+					downQueue.get(i);
+				}
+				
+			}
+		}
+		
+	}
+	
+	
+	class thdCheckWeight extends Thread {
+		
+		public void run(){
+			while(true){
+				
+				weight = 0;
+				System.out.println(weight);
+				
+			}
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	private void calcCurrLev(){
+		Point p = lblElev.getLocation();
+		int yLoc = LEV_FIRST - p.y;
+		yLoc /= LEV_INT;
+		currLevel = yLoc + 1;
+		System.out.println(currLevel);
+	}
+	
 }
+
+
+
+////ì—˜ë²  ì´ë¯¸ì§€ ë¦¬ìŠ¤íŠ¸
+//public ArrayList<ImageIcon> icnList = new ArrayList<ImageIcon>();
+//
+////ì—˜ë² ê°€ ì›€ì§ì´ê³  ìˆëŠ”ì§€
+//public boolean bMove = false;
+//
+////ì—˜ë²  íŠ¸ëœì ì…˜
+//public boolean bTsn = false;
+//
+////ì—˜ë² ì˜ ë¬¸ì´ ì—´ë ¸ëŠ”ì§€
+//public boolean bOpen = false;
+//
+////ElevLabel
+//JLabel lblElev = new JLabel("");
+//
+////MoveSetting & run
+//public int idxRun;
+//
+////floor start, end
+//public int nSflr, nEflr; //ì¸µìœ¼ë¡œ ë°›ê³ , listFloorYë¥¼ ì´ìš©í•´ì„œ ë°”ê¾¼ë‹¤
+//public int nNowflr; //í˜„ì¬ ì¸µ
+//
+////elev move
+//public Point p;//í•„ìš”í• ê¹Œ?
+//
+////ê° ì¸µì˜ ìœ„ì¹˜ (ì—˜ë¦¬ë² ì´í„° ì´ë™ í¸í•˜ê²Œí•˜ë¼ê³ )
+//public ArrayList<Integer> listFloorY = new ArrayList<Integer>();
+//
+////ì‚¬ì´ ê°„ê²©
+//public int nBt = 120;
+//
+//public Elevators(int ID) {
+//	switch(ID){
+//	case 1:
+//		icnList.add(new ImageIcon("elev1.png"));
+//		icnList.add(new ImageIcon("elev1_o1.png"));
+//		icnList.add(new ImageIcon("elev1_o2.png"));
+//		icnList.add(new ImageIcon("elev1_o3.png"));
+//		icnList.add(new ImageIcon("elev1_o4.png"));
+//		break;
+//	case 2:
+//		icnList.add(new ImageIcon("elev2.png"));
+//		icnList.add(new ImageIcon("elev2_o1.png"));
+//		icnList.add(new ImageIcon("elev2_o2.png"));
+//		icnList.add(new ImageIcon("elev2_o3.png"));
+//		icnList.add(new ImageIcon("elev2_o4.png"));
+//		break;
+//	case 3:
+//		icnList.add(new ImageIcon("elev3.png"));
+//		icnList.add(new ImageIcon("elev3_o1.png"));
+//		icnList.add(new ImageIcon("elev3_o2.png"));
+//		icnList.add(new ImageIcon("elev3_o3.png"));
+//		icnList.add(new ImageIcon("elev3_o4.png"));
+//		break;
+//	}
+//	
+//	lblElev.setIcon(icnList.get(0));
+//	
+//	//listFloorY ì´ˆê¸°í™”
+//	for(int i=0; i<6; i++)
+//		listFloorY.add(610 - nBt*i);
+//	
+//	nNowflr = 0;
+//}
+//
+//
+////ì—˜ë¦¬ë² ì´í„° ì˜¤ë¸Œì íŠ¸ ìì²´ë¥¼ ë¦¬í„´í•œë‹¤
+////ê°ì²´ ë§Œë“¤ì–´ë†“ê³ , runìœ¼ë¡œ ì›€ì§ì´ê²Œë§Œ í•˜ì
+//public Elevators GetElev() {
+//	return this;
+//}
+//
+//
+////ì—˜ë¦¬ë² ì´í„° labelì„ ë¦¬í„´í•œë‹¤
+////ì—˜ë¦¬ë² ì´í„°ë¥¼ main frameì— ë³´ì—¬ì¤€ë‹¤
+//public JLabel GetLblElev() {
+//	return this.lblElev;
+//}
+//
+//
+////runì„ í•˜ê¸°ì— ì•ì„œ, ë§¤ê°œë³€ìˆ˜ë¥¼ ì „ë‹¬í•˜ëŠ” í•¨ìˆ˜
+////ì—´ë¦¼ ë‹«ê¹€ - 1 2
+//public void MoveSetting(int i) {
+//	idxRun = i;
+//}
+//
+//
+////ì´ë™ - 3
+//public void MoveSetting(int i, int sflr, int eflr) {
+//	idxRun = i;
+//	//ì¸µ ê°’ìœ¼ë¡œ ë°›ì•˜ìœ¼ë‹ˆ, ì¢Œí‘œê°’ìœ¼ë¡œ ë°”ê¾¸ì–´ì¤˜ì•¼ í•œë‹¤
+//	nSflr = sflr;
+//	nEflr = eflr; //ì¸µì´ë‹ˆê¹Œ yê°’ì— ë”°ë¼ ì´ë™í•˜ê² ì§€?
+//	//movesettingì—ì„œ runì„ í˜¸ì¶œí•˜ë©´ ì ˆëŒ€ ì•ˆëœë‹¤
+//	
+//	nSflr = listFloorY.get(sflr);
+//	nEflr = listFloorY.get(eflr);
+//	
+//}
+//
+//
+////0: open, 1: close, 2: move
+////MoveSettingì„ ë¨¼ì € í•´ì¤˜ì•¼í•œë‹¤
+//public void run() {
+//
+//	int i;
+//	int time = 5;
+//	try {
+//		nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
+//		System.out.println(">>nNowflr: "+nNowflr);
+//		switch(idxRun) {
+//		
+//		//open
+//		case 1:
+//			System.out.println(">>Open elev");
+//			bOpen = true;
+//			bMove = false;
+//			for(i=0; i<time; i++){
+//				lblElev.setIcon(icnList.get(i));
+//				Thread.sleep(200);
+//			}
+//			lblElev.setIcon(icnList.get(0));
+//			break;
+//
+//
+//		//close
+//		case 2:
+//			bOpen = false;
+//			bMove = false;
+//			System.out.println(">>Close elev");
+//			for(i=0; i<time; i++){
+//				lblElev.setIcon(icnList.get(time-1-i));
+//				Thread.sleep(200);
+//			}
+//			lblElev.setIcon(icnList.get(0));
+//			break;
+//
+//
+//		//move
+//		case 3:
+//			bOpen = false;
+//			bMove = true;
+//			System.out.println(">>Move elev");
+//			//bOpne ìœ„ì—ì„œ ì„¤ì •í•´ï¿½Zìœ¼ë‹ˆ ì•ˆê±´ë“œë ¤ë„ ã…‡ã…‹
+//			System.out.println(nSflr+", "+nEflr);
+//			if(nSflr > nEflr) { //ê³ ì¸µ(10) -> ì €ì¸µ(3)
+//
+//				while(true) {
+//					Thread.sleep(200);
+//					nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
+//					p = lblElev.getLocation();
+//					if(p.y > nEflr) //ë‚´ê°€ ìˆëŠ” ìœ„ì¹˜ê°€, ë„ì°©í•  ì¸µë³´ë‹¤ ë†’ë‹¤. (ë‚´ë ¤ê°€ì•¼í•¨)
+//						lblElev.setLocation(p.x, p.y-10);
+//					else break;
+//				}
+//
+//			} else { //ì €ì¸µ(3) -> ê³ ì¸µ(10)
+//				while(true) {
+//					Thread.sleep(200);
+//					nNowflr = (610-lblElev.getLocation().y)/nBt + 1;
+//					p = lblElev.getLocation();
+//					if(nEflr > p.y) //ë‚´ê°€ ìˆëŠ” ìœ„ì¹˜ê°€, ë„ì°©í•  ì¸µë³´ë‹¤ ì ë‹¤. (ì˜¬ë¼ê°€ì•¼í•¨)
+//						lblElev.setLocation(p.x, p.y+10);
+//					else break;;
+//				}
+//			}
+//			break;
+//
+//		}
+//	} 
+//	catch(Exception e) {
+//		e.printStackTrace();
+//	}
+//
+//}
+

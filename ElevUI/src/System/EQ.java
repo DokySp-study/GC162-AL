@@ -23,145 +23,7 @@ public class EQ extends Thread { //EQ == elevator queue
 		//3이면 elev3 - eq
 	}
 
-	//계속 돌면서
-	public void run() {
-		System.out.print("run.. ");
-		int i;
-		//while(true) {
-		System.out.print(". ");
-		//큐에 무언가가 들어있다면
-		//엘리베이터가 현재 위치에서, 그 위치까지 이동하게 한다
-		try {
-			if(this.list.size() > 0) {
-				switch(idx){
-				case 1:
-					if(Window.elev1.bTsn == false){
-						System.out.println(">>Q1 size over 1");
-						//tsn
-						Window.elev1.bTsn = true;
 
-						//열림
-						Window.elev1.MoveSetting(1);
-						Window.elev1.run();
-						Window.elev1.join();
-
-						//닫힘
-						Window.elev1.MoveSetting(2);
-						Window.elev1.run();
-						Window.elev1.join();
-
-						//움직임
-						Window.elev1.MoveSetting(3, Window.elev1.nNowflr, Window.q1.list.remove());
-						Window.elev1.run();
-						Window.elev1.join();
-
-						//열림
-						Window.elev1.MoveSetting(1);
-						Window.elev1.run();
-						Window.elev1.join();
-
-						//닫힘
-						Window.elev1.MoveSetting(2);
-						Window.elev1.run();
-						Window.elev1.join();
-
-						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
-						for(i=0; i<3; i++)
-							Thread.sleep(100);
-
-						//tsn
-						Window.elev1.bTsn = false;
-
-						break;
-					}
-				case 2:
-					if(Window.elev2.bTsn == false) {
-
-						System.out.println(">>Q2 size over 1");
-						//tsn
-						Window.elev2.bTsn = true;
-
-						//열림
-						Window.elev2.MoveSetting(1);
-						Window.elev2.run();
-						Window.elev2.join();
-
-						//닫힘
-						Window.elev2.MoveSetting(2);
-						Window.elev2.run();
-						Window.elev2.join();
-
-						//움직임
-						Window.elev2.MoveSetting(3, Window.elev2.nNowflr, Window.q2.list.remove());
-						Window.elev2.run();
-						Window.elev2.join();
-
-						//열림
-						Window.elev2.MoveSetting(1);
-						Window.elev2.run();
-						Window.elev2.join();
-
-						//닫힘
-						Window.elev2.MoveSetting(2);
-						Window.elev2.run();
-						Window.elev2.join();
-
-						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
-						for(i=0; i<3; i++)
-							Thread.sleep(100);
-
-						//tsn
-						Window.elev2.bTsn = false;
-
-						break;
-					}
-				case 3:
-					if(Window.elev3.bTsn == false){
-						//tsn
-						Window.elev3.bTsn = true;
-
-						System.out.println(">>Q3 size over 1");
-						//열림
-						Window.elev3.MoveSetting(1);
-						Window.elev3.run();
-						Window.elev3.join();
-
-						//닫힘
-						Window.elev3.MoveSetting(2);
-						Window.elev3.run();
-						Window.elev3.join();
-
-						//움직임
-						Window.elev3.MoveSetting(3, Window.elev3.nNowflr, Window.q3.list.remove());
-						Window.elev3.run();
-						Window.elev3.join();
-
-						//열림
-						Window.elev3.MoveSetting(1);
-						Window.elev3.run();
-						Window.elev3.join();
-
-						//닫힘
-						Window.elev3.MoveSetting(2);
-						Window.elev3.run();
-						Window.elev3.join();
-
-						//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
-						for(i=0; i<3; i++)
-							Thread.sleep(100);
-
-						//tsn
-						Window.elev3.bTsn = false;
-
-						break;
-					}
-				}
-			}
-		}catch(InterruptedException e) {
-
-		}
-
-	}
 	//}
 
 	public void Add(int i) {
@@ -177,3 +39,145 @@ public class EQ extends Thread { //EQ == elevator queue
 	}
 
 }
+
+
+
+////계속 돌면서
+//public void run() {
+//	System.out.print("run.. ");
+//	int i;
+//	//while(true) {
+//	System.out.print(". ");
+//	//큐에 무언가가 들어있다면
+//	//엘리베이터가 현재 위치에서, 그 위치까지 이동하게 한다
+//	try {
+//		if(this.list.size() > 0) {
+//			switch(idx){
+//			case 1:
+//				if(Window.elev1.bTsn == false){
+//					System.out.println(">>Q1 size over 1");
+//					//tsn
+//					Window.elev1.bTsn = true;
+//
+//					//열림
+//					Window.elev1.MoveSetting(1);
+//					Window.elev1.run();
+//					Window.elev1.join();
+//
+//					//닫힘
+//					Window.elev1.MoveSetting(2);
+//					Window.elev1.run();
+//					Window.elev1.join();
+//
+//					//움직임
+//					Window.elev1.MoveSetting(3, Window.elev1.nNowflr, Window.q1.list.remove());
+//					Window.elev1.run();
+//					Window.elev1.join();
+//
+//					//열림
+//					Window.elev1.MoveSetting(1);
+//					Window.elev1.run();
+//					Window.elev1.join();
+//
+//					//닫힘
+//					Window.elev1.MoveSetting(2);
+//					Window.elev1.run();
+//					Window.elev1.join();
+//
+//					//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
+//					for(i=0; i<3; i++)
+//						Thread.sleep(100);
+//
+//					//tsn
+//					Window.elev1.bTsn = false;
+//
+//					break;
+//				}
+//			case 2:
+//				if(Window.elev2.bTsn == false) {
+//
+//					System.out.println(">>Q2 size over 1");
+//					//tsn
+//					Window.elev2.bTsn = true;
+//
+//					//열림
+//					Window.elev2.MoveSetting(1);
+//					Window.elev2.run();
+//					Window.elev2.join();
+//
+//					//닫힘
+//					Window.elev2.MoveSetting(2);
+//					Window.elev2.run();
+//					Window.elev2.join();
+//
+//					//움직임
+//					Window.elev2.MoveSetting(3, Window.elev2.nNowflr, Window.q2.list.remove());
+//					Window.elev2.run();
+//					Window.elev2.join();
+//
+//					//열림
+//					Window.elev2.MoveSetting(1);
+//					Window.elev2.run();
+//					Window.elev2.join();
+//
+//					//닫힘
+//					Window.elev2.MoveSetting(2);
+//					Window.elev2.run();
+//					Window.elev2.join();
+//
+//					//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
+//					for(i=0; i<3; i++)
+//						Thread.sleep(100);
+//
+//					//tsn
+//					Window.elev2.bTsn = false;
+//
+//					break;
+//				}
+//			case 3:
+//				if(Window.elev3.bTsn == false){
+//					//tsn
+//					Window.elev3.bTsn = true;
+//
+//					System.out.println(">>Q3 size over 1");
+//					//열림
+//					Window.elev3.MoveSetting(1);
+//					Window.elev3.run();
+//					Window.elev3.join();
+//
+//					//닫힘
+//					Window.elev3.MoveSetting(2);
+//					Window.elev3.run();
+//					Window.elev3.join();
+//
+//					//움직임
+//					Window.elev3.MoveSetting(3, Window.elev3.nNowflr, Window.q3.list.remove());
+//					Window.elev3.run();
+//					Window.elev3.join();
+//
+//					//열림
+//					Window.elev3.MoveSetting(1);
+//					Window.elev3.run();
+//					Window.elev3.join();
+//
+//					//닫힘
+//					Window.elev3.MoveSetting(2);
+//					Window.elev3.run();
+//					Window.elev3.join();
+//
+//					//너무 빨리움직이면 보기어려울 수 있으니까, 잠깐 쉬게
+//					for(i=0; i<3; i++)
+//						Thread.sleep(100);
+//
+//					//tsn
+//					Window.elev3.bTsn = false;
+//
+//					break;
+//				}
+//			}
+//		}
+//	}catch(InterruptedException e) {
+//
+//	}
+//
+//}
