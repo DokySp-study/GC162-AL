@@ -25,12 +25,16 @@ public class Window extends Thread{
 	public static EQ q1 = new EQ(1);
 	public static EQ q2 = new EQ(2);
 	public static EQ q3 = new EQ(3);
-
+	
 	//각 층의 위치 (엘리베이터 이동 편하게하라고)
 	public ArrayList<Integer> listFloorY = new ArrayList<Integer>();
 
 	//사이 간격
 	public int nBt = 120;
+	
+	
+	
+	
 
 	public static void main(String[] args) {
 		Window main = new Window();
@@ -68,8 +72,6 @@ public class Window extends Thread{
 		
 		
 		
-		
-		
 		//button init
 		AddBtn();
 		
@@ -80,7 +82,7 @@ public class Window extends Thread{
 		//in pnl add button
 		pnl.add(btnf1); pnl.add(btnf2); pnl.add(btnf3); pnl.add(btnf4); pnl.add(btnf5); pnl.add(btnf6);
 		pnl.setBackground(Color.white);
-		pnl.setOpaque(true);
+		//pnl.setOpaque(true);
 
 		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMain.setVisible(true);
@@ -89,42 +91,46 @@ public class Window extends Thread{
 		elev1.runMoveThd();
 		elev1.runCheckThd();
 		
-//		try {
-//			
-//			elev1.upQueue.addLast(1);
-//			System.out.println("push 1");
-//			Thread.sleep(1000);
-//			
-//			elev1.upQueue.addLast(2);
-//			System.out.println("push 2");
-//			Thread.sleep(1000);
-//			
-//			elev1.upQueue.addLast(4);
-//			System.out.println("push 4");
-//			Thread.sleep(1000);
-//			elev1.upQueue.addLast(5);
-//			System.out.println("push 5");
-//			Thread.sleep(1000);
-//			
-//			elev1.downQueue.addLast(4);
-//			System.out.println("push 4");
-//			Thread.sleep(1000);
-//			
-//			elev1.downQueue.addLast(1);
-//			System.out.println("push 1");
-//			Thread.sleep(1000);
-//			
-//			elev1.upQueue.addLast(6);
-//			System.out.println("push 6");
-//			Thread.sleep(1000);
-//			
-//			
-//			
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 		
+		while(true){
 		
+		try {
+			
+			elev1.upQueue.addLast(1);
+			System.out.println("push 1");
+			Thread.sleep(3000);
+			
+			elev1.upQueue.addLast(2);
+			System.out.println("push 2");
+			Thread.sleep(3000);
+			
+			elev1.upQueue.addLast(4);
+			System.out.println("push 4");
+			Thread.sleep(3000);
+			
+			elev1.upQueue.addLast(6);
+			System.out.println("push 6");
+			Thread.sleep(3000);
+			
+			elev1.downQueue.addLast(4);
+			System.out.println("push 4");
+			Thread.sleep(3000);
+			
+			elev1.downQueue.addLast(2);
+			System.out.println("push 2");
+			Thread.sleep(3000);
+			
+			elev1.downQueue.addLast(1);
+			System.out.println("push 1");
+			Thread.sleep(3000);
+			
+			
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		}
 
 	}
 
@@ -202,6 +208,7 @@ public class Window extends Thread{
 //			ImageIcon humCov = new ImageIcon("hum"+i+"_0.png");
 //			hum.setIcon(humCov);
 //			hum.setBounds(100, 100, 100, 100);
+			
 			JLabel tmpHum = new Humans(levNum).GetLblHum();
 			frmMain.add(tmpHum, "Center");
 			frmMain.repaint();

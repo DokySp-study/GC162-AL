@@ -46,45 +46,52 @@ public class Elevators {
 			try{
 				while(true){
 					
+					
+					if(upQueue.size() == 0 && downQueue.size() != 0)
+						isGoingUp = false;
+					else if(upQueue.size() != 0 && downQueue.size() == 0)
+						isGoingUp = true;
+					
+					
 					//올라갈 때
 					if(isGoingUp){
 						int getNextLev;
-						if(upQueue.size() == 0)
-							continue;
-						
-						getNextLev = (int) upQueue.poll();
-						
-						while(true){
+						System.out.println(1);
+						if(upQueue.size() != 0){
 							
-							if(getNextLev == currLevel){
-								openDoor();
-								System.out.println("door open");
-								Thread.sleep(1000);
-								//사람 탑승 기다리는 부분 
+							getNextLev = (int) upQueue.poll();
+							
+							while(true){
 								
-								closeDoor();
-								System.out.println("door close");
+								if(getNextLev == currLevel){
+									openDoor();
+									System.out.println("door open");
+									Thread.sleep(1000);
+									//사람 탑승 기다리는 부분 
+									
+									closeDoor();
+									System.out.println("door close");
+									
+									break;
+									
+								}
 								
-								if(upQueue.size() == 0)
+								Point p = lblElev.getLocation();
+								
+								if(isTouchMax(p.y)){
 									isGoingUp = false;
+									break;
+								}
 								
-								break;
+								for(int i = 0; i <= LEV_INT; i++){
+									lblElev.setLocation(p.x, p.y - i);
+										Thread.sleep(5);
+			
+								}
+								calcCurrLev();
+							
 							}
 							
-							Point p = lblElev.getLocation();
-							
-							if(isTouchMax(p.y)){
-								isGoingUp = false;
-								continue;
-							}
-							
-							for(int i = 0; i <= LEV_INT; i++){
-								lblElev.setLocation(p.x, p.y - i);
-									Thread.sleep(5);
-		
-							}
-							calcCurrLev();
-						
 						}
 						
 						
@@ -93,41 +100,40 @@ public class Elevators {
 					//내려갈 때 
 					else{
 						int getNextLev;
-						if(downQueue.size() == 0)
-							continue;
-						
-						getNextLev = (int) downQueue.poll();
-						
-						while(true){
+						System.out.println(2);
+						if(downQueue.size() != 0){
 							
-							if(getNextLev == currLevel){
-								openDoor();
-								System.out.println("door open");
-								Thread.sleep(1000);
-								//사람 탑승 기다리는 부분 
+							getNextLev = (int) downQueue.poll();
+							
+							while(true){
 								
-								closeDoor();
-								System.out.println("door close");
+								if(getNextLev == currLevel){
+									openDoor();
+									System.out.println("door open");
+									Thread.sleep(1000);
+									//사람 탑승 기다리는 부분 
+									
+									closeDoor();
+									System.out.println("door close");
+									
+									break;
+								}
 								
-								if(downQueue.size() == 0)
-									isGoingUp = false;
+								Point p = lblElev.getLocation();
 								
-								break;
+								if(isTouchMin(p.y)){
+									isGoingUp = true;
+									break;
+								}
+								
+								for(int i = 0; i <= LEV_INT; i++){
+									lblElev.setLocation(p.x, p.y + i);
+										Thread.sleep(5);
+								}
+								calcCurrLev();
+							
 							}
 							
-							Point p = lblElev.getLocation();
-							
-							if(isTouchMin(p.y)){
-								isGoingUp = true;
-								continue;
-							}
-							
-							for(int i = 0; i <= LEV_INT; i++){
-								lblElev.setLocation(p.x, p.y + i);
-									Thread.sleep(5);
-							}
-							calcCurrLev();
-						
 						}
 						
 					}
