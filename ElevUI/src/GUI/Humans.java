@@ -56,7 +56,6 @@ public class Humans extends Thread{
 						//lblHum.setLocation(i, lblHum.getY());
 						lblHum.setLocation(p.x+i, p.y);
 						Thread.sleep(30);
-						System.out.println(3);
 					}
 				}
 				

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Window extends Thread{
 
 	//메인 프레임
-	public JFrame frmMain = new JFrame("Elevator");
+	public static JFrame frmMain = new JFrame("Elevator");
 
 	//창 아래에 배치할 버튼 목록(사람을 몇층에 놓을까)
 	public JButton btnf1, btnf2, btnf3, btnf4, btnf5, btnf6;
@@ -46,8 +46,14 @@ public class Window extends Thread{
 		JLabel gb = new JLabel(""); //gb
 
 		//background img
-		frmMain.setContentPane(new JLabel(new ImageIcon("elevbg.png")));
-
+		
+		ImageIcon tmpIcn = new ImageIcon("elevbg.jpg");
+		Image tmpImg = tmpIcn.getImage();
+		tmpImg.getScaledInstance(1000, 780, Image.SCALE_FAST);
+		tmpIcn = new ImageIcon(tmpImg);
+		
+		frmMain.setContentPane(new JLabel(tmpIcn));
+		
 		frmMain.setBounds(50, 50, 1000, 780);
 		frmMain.setLayout(new BorderLayout());
 
@@ -58,14 +64,14 @@ public class Window extends Thread{
 			listFloorY.add(610 - nBt*i);
 
 		//add elev
-		elev1.GetLblElev().setBounds(685, 610, 63, 90);
-		elev2.GetLblElev().setBounds(785, 610, 63, 90);
-		elev3.GetLblElev().setBounds(895, 610, 63, 90);
+		elev1.GetLblElev().setBounds(566, 610, 63, 90);
+		elev2.GetLblElev().setBounds(677, 610, 63, 90);
+		elev3.GetLblElev().setBounds(795, 610, 63, 90);
 
-		frmMain.add(elev1.GetLblElev(), "Center");
-		frmMain.add(elev2.GetLblElev(), "Center");
-		frmMain.add(elev3.GetLblElev(), "Center");
-		frmMain.add(gb, "Center");
+		frmMain.getContentPane().add(elev1.GetLblElev(), "Center");
+		frmMain.getContentPane().add(elev2.GetLblElev(), "Center");
+		frmMain.getContentPane().add(elev3.GetLblElev(), "Center");
+		frmMain.getContentPane().add(gb, "Center");
 
 		
 		
@@ -203,14 +209,15 @@ public class Window extends Thread{
 		public void actionPerformed(ActionEvent e) {
 			System.out.println(e.getActionCommand());
 			int levNum = Integer.parseInt(e.getActionCommand());
-//			JLabel hum = new JLabel();
-//			int i = 0;
-//			ImageIcon humCov = new ImageIcon("hum"+i+"_0.png");
-//			hum.setIcon(humCov);
-//			hum.setBounds(100, 100, 100, 100);
+			JLabel hum = new JLabel();
+			int i = 0;
+			ImageIcon humCov = new ImageIcon();
+			hum.setIcon(humCov);
+			hum.setBounds(100, 100, 100, 100);
 			
 			JLabel tmpHum = new Humans(levNum).GetLblHum();
-			frmMain.add(tmpHum, "Center");
+			frmMain.getContentPane().add(tmpHum, "Center");
+			frmMain.getContentPane().add(hum, "Center");
 			frmMain.repaint();
 		}
 		
