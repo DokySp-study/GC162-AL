@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import System.EQ;
 
 public class Remotes{
 
@@ -14,7 +13,7 @@ public class Remotes{
 
 	//내릴 층
 	public int nEflr = 0;
-
+	
 
 	//생성자
 	public Remotes() {
@@ -61,11 +60,12 @@ public class Remotes{
 		btn5.addActionListener(actionHandler);
 		btn6.addActionListener(actionHandler);
 
-
-
+		
 		//in frm add
 		frm.add(title, "North");
 		frm.add(pnl, "Center");
+		
+		frm.setVisible(true);
 
 	}
 
@@ -110,22 +110,6 @@ public class Remotes{
 		btn6.setFocusPainted(false);
 	}
 
-	//리모콘도 스레드로 구현해야 하나..?
-	//아직까지 문제는 없었는데 살짝 걱정이된다!
-	public JFrame GetFrame()
-	{
-		return this.frm;
-		//dispose는 human에서 할까? 층도 얻어야 하니까?
-	}
-
-
-	//그냥 변수를 바로 받았다. 안쓰긴하지만 혹시모르니까 일단은 냅두자
-	//내가 몇층에서 내리는지를 리턴한다. human에서 받는다
-	public int GetEndFlr()
-	{
-		return this.nEflr;
-	}
-
 	class ActionEventHandler implements ActionListener {
 
 		@Override
@@ -145,8 +129,20 @@ public class Remotes{
 				nEflr = 6;
 			}
 			System.out.println(nEflr);
+			frm.dispose();
 		}
 
 	}
+	
+	
+	public int getLevFromPad(){
+		return nEflr;
+	}
+	
+	
+	
 }
+
+
+
 

@@ -2,6 +2,10 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class Elevators {
@@ -9,9 +13,16 @@ public class Elevators {
 	private final int LEV_INT = 119;
 	private final int LEV_FIRST = 610;
 	private final int LEV_LAST = 15;
-	public LinkedList<Integer> upQueue = new LinkedList<Integer>();
-	public LinkedList<Integer> downQueue = new LinkedList<Integer>();
-	private int currLevel;
+	
+	public ArrayList<Integer> upQueue = new ArrayList<Integer>();
+	public ArrayList<Integer> downQueue = new ArrayList<Integer>();
+	
+	public ArrayList<Humans> HumStack = new ArrayList<Humans>();
+	
+	public boolean isDoorOpen;
+	public boolean isMooving;
+	
+	public int currLevel;
 	private int weight;
 	private boolean isGoingUp;
 	
@@ -21,6 +32,7 @@ public class Elevators {
 	public Elevators(){
 		lblElev.setIcon(new ImageIcon("elev3_o0.png"));
 		isGoingUp = true;
+		isDoorOpen = false;
 		currLevel = 1;
 		
 	}
@@ -39,43 +51,87 @@ public class Elevators {
 	}
 	
 	
+	
+	
 	class thdMoveElev extends Thread {
 		
 		public void run(){
+			
+			
+
 			
 			try{
 				while(true){
 					
 					
-					if(upQueue.size() == 0 && downQueue.size() != 0)
-						isGoingUp = false;
-					else if(upQueue.size() != 0 && downQueue.size() == 0)
-						isGoingUp = true;
-					
-					
 					//올라갈 때
 					if(isGoingUp){
 						int getNextLev;
-						System.out.println(1);
+						System.out.print("");
+						
+						if(HumStack.size() != 0 && isMooving == false){
+							for(int i = 0; i < HumStack.size(); i++){
+									if(HumStack.get(i).targetLev > currLevel){
+										insertUpQueue(HumStack.get(i).targetLev);
+										isMooving = true;
+									}
+							}
+						}
+						
+						
+						
+						if(upQueue.size() == 0 && downQueue.size() != 0){
+							isMooving = true;
+							isGoingUp = false;
+						}
+						else if(upQueue.size() != 0 && downQueue.size() == 0){
+							isMooving = true;
+							isGoingUp = true;
+						}
+						
+						
+						
 						if(upQueue.size() != 0){
 							
-							getNextLev = (int) upQueue.poll();
+							
+							
 							
 							while(true){
 								
+								getNextLev = (int) upQueue.get(0);
+								
 								if(getNextLev == currLevel){
+									
+									upQueue.remove((Integer)currLevel);
+									
+									
 									openDoor();
-									System.out.println("door open");
-									Thread.sleep(1000);
-									//사람 탑승 기다리는 부분 
+									//System.out.println("door open");
+									
+									//People get in or out
+									for(int i = 0; i < HumStack.size(); i++){
+										if(HumStack.get(i).targetLev == currLevel){
+											HumStack.get(i).thdLeaveStart(lblElev.getX(), currLevel);
+											HumStack.remove(i);
+										}
+									}
+									
+									Thread.sleep(1500);
+
 									
 									closeDoor();
-									System.out.println("door close");
+									//System.out.println("door close");
+									
+									//Weight
+									if(HumStack.size() >= 15)
+										currLevel = -1;
 									
 									break;
 									
 								}
 								
+								
+								isMooving = true;
 								Point p = lblElev.getLocation();
 								
 								if(isTouchMax(p.y)){
@@ -86,11 +142,12 @@ public class Elevators {
 								for(int i = 0; i <= LEV_INT; i++){
 									lblElev.setLocation(p.x, p.y - i);
 										Thread.sleep(5);
-			
 								}
 								calcCurrLev();
 							
 							}
+							
+							isMooving = false;
 							
 						}
 						
@@ -100,24 +157,69 @@ public class Elevators {
 					//내려갈 때 
 					else{
 						int getNextLev;
-						System.out.println(2);
+						System.out.print("");
+						
+						if(HumStack.size() != 0 && isMooving == false){
+							for(int i = 0; i < HumStack.size(); i++){
+									if(HumStack.get(i).targetLev < currLevel){
+										insertDownQueue(HumStack.get(i).targetLev);
+										isMooving = true;
+									}
+							}
+						}
+						
+						
+						
+						if(upQueue.size() == 0 && downQueue.size() != 0){
+							isMooving = true;
+							isGoingUp = false;
+						}
+						else if(upQueue.size() != 0 && downQueue.size() == 0){
+							isMooving = true;
+							isGoingUp = true;
+						}
+						
+						
+						
 						if(downQueue.size() != 0){
 							
-							getNextLev = (int) downQueue.poll();
+							
 							
 							while(true){
 								
+								getNextLev = (int) downQueue.get(0);
+								
 								if(getNextLev == currLevel){
+									
+									downQueue.remove((Integer)currLevel);
+									
+									
 									openDoor();
-									System.out.println("door open");
-									Thread.sleep(1000);
-									//사람 탑승 기다리는 부분 
+									//System.out.println("door open");
+									
+									//People get in or out
+									for(int i = 0; i < HumStack.size(); i++){
+										if(HumStack.get(i).targetLev == currLevel){
+											System.out.println("target lev:"+ HumStack.get(i).targetLev);
+											HumStack.get(i).thdLeaveStart(lblElev.getX(), currLevel);
+											HumStack.remove(i);
+										}
+									}
+									
+									Thread.sleep(1500);
 									
 									closeDoor();
-									System.out.println("door close");
+									//System.out.println("door close");
+									
+									//Weight
+									if(HumStack.size() >= 15)
+										currLevel = -1;
+									
 									
 									break;
 								}
+								
+								isMooving = true;
 								
 								Point p = lblElev.getLocation();
 								
@@ -134,19 +236,20 @@ public class Elevators {
 							
 							}
 							
+							isMooving = false;
+							
 						}
 						
 					}
 					
 				}
-				
+				  
 			} 
 			catch (InterruptedException e) {
-				e.printStackTrace();
+				
 			}
 			
 		}
-		
 		
 		
 		private boolean isTouchMax(int yLoc){
@@ -165,6 +268,14 @@ public class Elevators {
 			
 		}
 		
+
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		private void openDoor(){
@@ -176,7 +287,12 @@ public class Elevators {
 					e.printStackTrace();
 				}
 			}
+			
+			isDoorOpen = true;
+			
 		}
+		
+		
 		private void closeDoor(){
 			for(int i = 4; i >= 0; i--){
 				lblElev.setIcon(new ImageIcon("elev3_o"+i+".png"));
@@ -186,6 +302,9 @@ public class Elevators {
 					e.printStackTrace();
 				}
 			}
+			
+			isDoorOpen = false;
+			
 		}
 
 	}
@@ -193,7 +312,38 @@ public class Elevators {
 	
 	
 	
+	public void insertUpQueue(int input){
+		
+		if(upQueue.indexOf(input) != -1)
+			return;
+
+		
+		upQueue.add(input);
+		Collections.sort(upQueue);
+		
+//		for(Integer a: upQueue)
+//			System.out.println(a);
+//		System.out.println();
+			
+	}
 	
+	
+	
+	public void insertDownQueue(int input){
+		
+		if(downQueue.indexOf(input) != -1)
+			return;
+		
+		
+		//System.out.println("queue");
+		downQueue.add(input);
+		Collections.sort(downQueue); /// 내림차순이 아님!!
+		Collections.reverse(downQueue);
+//		for(Integer a: downQueue)
+//			System.out.print(a + "/");
+//		System.out.println();
+			
+	}
 	
 	
 	
@@ -202,12 +352,12 @@ public class Elevators {
 		
 		public void run(){
 			while(true){
-				//System.out.println("Up queue");
+				System.out.println("Up queue");
 				for(int i = 0; i < upQueue.size(); i++){
 					upQueue.get(i);
 				}
 				
-				//System.out.println("Down queue");
+				System.out.println("Down queue");
 				for(int i = 0; i < downQueue.size(); i++){
 					downQueue.get(i);
 				}
@@ -242,7 +392,7 @@ public class Elevators {
 		int yLoc = LEV_FIRST - p.y;
 		yLoc /= LEV_INT;
 		currLevel = yLoc + 1;
-		System.out.println(currLevel);
+		//System.out.println(currLevel);
 	}
 	
 }

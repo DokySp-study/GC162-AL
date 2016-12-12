@@ -2,16 +2,24 @@ package GUI;
 
 import javax.swing.*;
 
-import System.EQ;
+import System.Core;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Window extends Thread{
-
+	
+	public static boolean autoMode = true;
+	public static int frequency = 1000;
+	public static int totalMsec = 0;
+	public static int totalUser = 0;
+	
+	
 	//메인 프레임
-	public static JFrame frmMain = new JFrame("Elevator");
+	public JFrame frmMain = new JFrame("Elevator");
 
 	//창 아래에 배치할 버튼 목록(사람을 몇층에 놓을까)
 	public JButton btnf1, btnf2, btnf3, btnf4, btnf5, btnf6;
@@ -20,15 +28,22 @@ public class Window extends Thread{
 	public static Elevators elev1 = new Elevators();
 	public static Elevators elev2 = new Elevators();
 	public static Elevators elev3 = new Elevators();
-
-	//큐
-	public static EQ q1 = new EQ(1);
-	public static EQ q2 = new EQ(2);
-	public static EQ q3 = new EQ(3);
+	
+	public static final int ELEV_FIR = 566;
+	public static final int ELEV_SEC = 678;
+	public static final int ELEV_TRD = 788;
+	
+	public static Core coreSystem = new Core();
+	
+	
+	public static ArrayList<Humans>[] floorHumStack = new ArrayList[6];
+	
+	
+	
 	
 	//각 층의 위치 (엘리베이터 이동 편하게하라고)
 	public ArrayList<Integer> listFloorY = new ArrayList<Integer>();
-
+	
 	//사이 간격
 	public int nBt = 120;
 	
@@ -46,7 +61,6 @@ public class Window extends Thread{
 		JLabel gb = new JLabel(""); //gb
 
 		//background img
-		
 		ImageIcon tmpIcn = new ImageIcon("elevbg.jpg");
 		Image tmpImg = tmpIcn.getImage();
 		tmpImg.getScaledInstance(1000, 780, Image.SCALE_FAST);
@@ -56,25 +70,28 @@ public class Window extends Thread{
 		
 		frmMain.setBounds(50, 50, 1000, 780);
 		frmMain.setLayout(new BorderLayout());
-
+		
+		for(int i = 0; i < floorHumStack.length; i++)
+			floorHumStack[i] = new ArrayList<Humans>();
+		
 		JPanel pnl = new JPanel();
 
+		
+		
+		
 		//listFloorY 초기화
 		for(int i=0; i<6; i++)
 			listFloorY.add(610 - nBt*i);
 
 		//add elev
-		elev1.GetLblElev().setBounds(566, 610, 63, 90);
-		elev2.GetLblElev().setBounds(677, 610, 63, 90);
-		elev3.GetLblElev().setBounds(795, 610, 63, 90);
+		elev1.GetLblElev().setBounds(ELEV_FIR, 610, 63, 90);
+		elev2.GetLblElev().setBounds(ELEV_SEC, 610, 63, 90);
+		elev3.GetLblElev().setBounds(ELEV_TRD, 610, 63, 90);
 
 		frmMain.getContentPane().add(elev1.GetLblElev(), "Center");
 		frmMain.getContentPane().add(elev2.GetLblElev(), "Center");
 		frmMain.getContentPane().add(elev3.GetLblElev(), "Center");
 		frmMain.getContentPane().add(gb, "Center");
-
-		
-		
 		
 		
 		
@@ -94,48 +111,31 @@ public class Window extends Thread{
 		frmMain.setVisible(true);
 		
 		
+		
+		
+		
+		
 		elev1.runMoveThd();
-		elev1.runCheckThd();
+		
+		elev2.runMoveThd();
+		elev3.runMoveThd();
+		//elev1.runCheckThd();
 		
 		
-		while(true){
-		
-		try {
+		while(autoMode){
 			
-			elev1.upQueue.addLast(1);
-			System.out.println("push 1");
-			Thread.sleep(3000);
-			
-			elev1.upQueue.addLast(2);
-			System.out.println("push 2");
-			Thread.sleep(3000);
-			
-			elev1.upQueue.addLast(4);
-			System.out.println("push 4");
-			Thread.sleep(3000);
-			
-			elev1.upQueue.addLast(6);
-			System.out.println("push 6");
-			Thread.sleep(3000);
-			
-			elev1.downQueue.addLast(4);
-			System.out.println("push 4");
-			Thread.sleep(3000);
-			
-			elev1.downQueue.addLast(2);
-			System.out.println("push 2");
-			Thread.sleep(3000);
-			
-			elev1.downQueue.addLast(1);
-			System.out.println("push 1");
-			Thread.sleep(3000);
+			try {
+				Random rand = new Random();
+				Thread.sleep(frequency);
+				//makePerson(rand.nextInt(6)+1);
+				makePerson(1);
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			
 			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		}
 
 	}
@@ -207,19 +207,26 @@ public class Window extends Thread{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getActionCommand());
+			//System.out.println(e.getActionCommand());
 			int levNum = Integer.parseInt(e.getActionCommand());
-			JLabel hum = new JLabel();
-			int i = 0;
-			ImageIcon humCov = new ImageIcon();
-			hum.setIcon(humCov);
-			hum.setBounds(100, 100, 100, 100);
-			
-			JLabel tmpHum = new Humans(levNum).GetLblHum();
-			frmMain.getContentPane().add(tmpHum, "Center");
-			frmMain.getContentPane().add(hum, "Center");
-			frmMain.repaint();
+			makePerson(levNum);
 		}
+		
+	}
+	
+	
+	
+	private void makePerson(int levNum){
+
+		JLabel hum = new JLabel();
+		ImageIcon humCov = new ImageIcon();
+		hum.setIcon(humCov);
+		hum.setBounds(100, 100, 100, 100);
+		
+		JLabel tmpHum = new Humans(levNum).GetLblHum();
+		frmMain.getContentPane().add(tmpHum, "Center");
+		frmMain.getContentPane().add(hum, "Center");
+		frmMain.repaint();
 		
 	}
 
