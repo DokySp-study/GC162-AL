@@ -78,39 +78,73 @@ public class Core extends Thread {
 			}
 			
 			else{ //Case 2
-				if(Window.elev1.isMooving == false){
-					setElevQueue(1, true, startLev, startLev);
-					setElevQueue(1, false, targetLev, targetLev);
-					printQueue(2);
-					return 1;
-				}
-				else if(Window.elev2.isMooving == false){
-					setElevQueue(2, true, startLev, startLev);
-					setElevQueue(2, false, targetLev, targetLev);
-					return 2;
-				}
-				else if(Window.elev3.isMooving == false){
-					setElevQueue(3, true, startLev, startLev);
-					setElevQueue(3, false, targetLev, targetLev);
-					return 3;
-				}
-				else{ //Case 3
-					tq[0] = uqSize[0] + dqSize[0];
-					tq[1] = uqSize[1] + dqSize[1];
-					tq[2] = uqSize[2] + dqSize[2];
-					
-					min = tq[0];
-					for(int i = 1; i < 3; i++){
-						if(min > tq[i]){
-							min = tq[i];
-							targetElev = i;
+				try{
+					if(Window.elev1.isMooving == false){
+						if(dqList.indexOf(0) != -1){ //나보다 밑에 있을 때
+							setElevQueue(1, true, startLev, startLev);
+							setElevQueue(1, false, targetLev, targetLev);
+							printQueue(2);
+							return 1;
+						}
+						else{ //같은 층일 
+							//setElevQueue(1, true, startLev, startLev);
+							setElevQueue(1, true, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(1, false, targetLev, targetLev);
+							printQueue(2);
+							return 1;
 						}
 					}
-					targetElev++;
-					setElevQueue(targetElev, false, startLev, targetLev);
-					printQueue(3);
-					return targetElev;
-					
+					else if(Window.elev2.isMooving == false){
+						if(dqList.indexOf(1) != -1){ //나보다 밑에 있을 때
+							setElevQueue(2, true, startLev, startLev);
+							setElevQueue(2, false, targetLev, targetLev);
+							return 2;
+						}
+						else{ //같은 층일 
+							//setElevQueue(1, true, startLev, startLev);
+							setElevQueue(2, true, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(2, false, targetLev, targetLev);
+							return 2;
+						}
+					}
+					else if(Window.elev3.isMooving == false){
+						if(dqList.indexOf(2) != -1){ //나보다 밑에 있을 때
+							setElevQueue(3, true, startLev, startLev);
+							setElevQueue(3, false, targetLev, targetLev);
+							return 3;
+						}
+						else{ //같은 층일 
+							//setElevQueue(1, true, startLev, startLev);
+							setElevQueue(3, true, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(3, false, targetLev, targetLev);
+							return 3;
+						}
+					}
+					else{ //Case 3
+						tq[0] = uqSize[0] + dqSize[0];
+						tq[1] = uqSize[1] + dqSize[1];
+						tq[2] = uqSize[2] + dqSize[2];
+						
+						min = tq[0];
+						for(int i = 1; i < 3; i++){
+							if(min > tq[i]){
+								min = tq[i];
+								targetElev = i;
+							}
+						}
+						targetElev++;
+						setElevQueue(targetElev, false, startLev, targetLev);
+						printQueue(3);
+						return targetElev;
+						
+					}
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+					return 0;
 				}
 				
 				
@@ -155,65 +189,73 @@ public class Core extends Thread {
 			}
 			
 			else{ //Case 2
-				
-				if(Window.elev1.isMooving == false){
-					if(uqList.indexOf(0) != -1){ //나보다 밑에 있을 때
-						setElevQueue(1, false, startLev, startLev);
-						setElevQueue(1, true, targetLev, targetLev);
-						printQueue(2);
-						return 1;
-					}
-					else{ //같은 층일 
-						setElevQueue(1, true, startLev, startLev);
-						setElevQueue(1, false, startLev, startLev);
-						setElevQueue(1, true, targetLev, targetLev);
-						printQueue(2);
-						return 1;
-					}
-				}
-				else if(Window.elev2.isMooving == false){
-					if(uqList.indexOf(1) != -1){ //나보다 밑에 있을 때
-						setElevQueue(2, false, startLev, startLev);
-						setElevQueue(2, true, targetLev, targetLev);
-						return 2;
-					}
-					else{ //같은 층일 
-						setElevQueue(2, true, startLev, startLev);
-						setElevQueue(2, false, startLev, startLev);
-						setElevQueue(2, true, targetLev, targetLev);
-						return 2;
-					}
-				}
-				else if(Window.elev3.isMooving == false){
-					if(uqList.indexOf(2) != -1){ //나보다 밑에 있을 때
-						setElevQueue(3, false, startLev, startLev);
-						setElevQueue(3, true, targetLev, targetLev);
-						return 3;
-					}
-					else{ //같은 층일 
-						setElevQueue(3, true, startLev, startLev);
-						setElevQueue(3, false, startLev, startLev);
-						setElevQueue(3, true, targetLev, targetLev);
-						return 3;
-					}
-				}
-				else{ //Case 3
-					tq[0] = uqSize[0] + dqSize[0];
-					tq[1] = uqSize[1] + dqSize[1];
-					tq[2] = uqSize[2] + dqSize[2];
-					
-					min = tq[0];
-					for(int i = 1; i < 3; i++){
-						if(min > tq[i]){
-							min = tq[i];
-							targetElev = i;
+				try{
+					if(Window.elev1.isMooving == false){
+						if(uqList.indexOf(0) != -1){ //나보다 밑에 있을 때
+							setElevQueue(1, false, startLev, startLev);
+							setElevQueue(1, true, targetLev, targetLev);
+							printQueue(2);
+							return 1;
+						}
+						else{ //같은 층일 
+							//setElevQueue(1, true, startLev, startLev);
+							setElevQueue(1, false, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(1, true, targetLev, targetLev);
+							printQueue(2);
+							return 1;
 						}
 					}
-					targetElev++;
-					setElevQueue(targetElev, true, startLev, targetLev);
-					printQueue(3);
-					return targetElev;
-					
+					else if(Window.elev2.isMooving == false){
+						if(uqList.indexOf(1) != -1){ //나보다 밑에 있을 때
+							setElevQueue(2, false, startLev, startLev);
+							setElevQueue(2, true, targetLev, targetLev);
+							return 2;
+						}
+						else{ //같은 층일 
+							//setElevQueue(2, true, startLev, startLev);
+							setElevQueue(2, false, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(2, true, targetLev, targetLev);
+							return 2;
+						}
+					}
+					else if(Window.elev3.isMooving == false){
+						if(uqList.indexOf(2) != -1){ //나보다 밑에 있을 때
+							setElevQueue(3, false, startLev, startLev);
+							setElevQueue(3, true, targetLev, targetLev);
+							return 3;
+						}
+						else{ //같은 층일 
+							//setElevQueue(3, true, startLev, startLev);
+							setElevQueue(3, false, startLev, startLev);
+							Thread.sleep(50);
+							setElevQueue(3, true, targetLev, targetLev);
+							return 3;
+						}
+					}
+					else{ //Case 3
+						tq[0] = uqSize[0] + dqSize[0];
+						tq[1] = uqSize[1] + dqSize[1];
+						tq[2] = uqSize[2] + dqSize[2];
+						
+						min = tq[0];
+						for(int i = 1; i < 3; i++){
+							if(min > tq[i]){
+								min = tq[i];
+								targetElev = i;
+							}
+						}
+						targetElev++;
+						setElevQueue(targetElev, true, startLev, targetLev);
+						printQueue(3);
+						return targetElev;
+						
+					}
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+					return 0;
 				}
 				
 				

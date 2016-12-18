@@ -13,7 +13,7 @@ import java.util.Random;
 public class Window extends Thread{
 	
 	public static boolean autoMode = true;
-	public static int frequency = 1000;
+	public static int frequency = 1500;
 	public static int totalMsec = 0;
 	public static int totalUser = 0;
 	
@@ -127,8 +127,8 @@ public class Window extends Thread{
 			try {
 				Random rand = new Random();
 				Thread.sleep(frequency);
-				//makePerson(rand.nextInt(6)+1);
-				makePerson(1);
+				makePerson(rand.nextInt(6)+1);
+				//makePerson(1);
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
