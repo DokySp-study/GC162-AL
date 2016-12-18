@@ -1,263 +1,250 @@
 package GUI;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
+
+import System.Core;
+
+import java.awt.Color;
+import java.awt.Point;
 import java.util.Random;
-import System.Operations;
-import System.EQ;
+
+
 
 public class Humans extends Thread{
 	//Human label
-	JLabel lblHum = new JLabel("");
-	String strTemp;
+	JLabel lblHum;
+	int humSkinNo;
+	boolean isMoving;
+	private int startLev;
+	public int targetLev;
+	
+	long start;
+	long end;
+	
+	private final int LEV_INT = 119;
+	private final int LEV_FIRST = 610;
+	private final int LEV_LAST = 25;
+	
+	
 
-	//Human Image
-	ImageIcon icnStop;
-	ImageIcon icnMove;
-
-	//MoveSetting & run
-	public int idxRun;
-
-	//층 선택할 위치. 중간에 한번 멈춰야 할 위치
-	public int nRemotePosX = 500; 
-
-	//내가 탈 엘리베이터의 위치
-	public int nElevPosX;
-
-	//내가 타고 있는 엘리베이터의 index
-	public int idxElev;
-
-	//내가 탄 층, 내가 내릴 층
-	public int nSflr, nEflr;  //좌표
-
-	//사이 간격
-	int nBt = 120;
-
-
-	//모든 human이 가지는 unique한 키
-	static public int idxKeyChoice = 0; //얘는 만들어주는 애고(모든 오브젝트가 공유하니까 얘를 사용하면 안됨!)
-	public int idxUnique; //얘가 idxKeyChoice를 로컬로 저장한다. 그러니까 휴먼의 실제 유니크키는 이거!
-
-
-	//lblHum위치
-	public Point p;
-
-	public Humans() {
-
-		Random ran = new Random();
-		int i = ran.nextInt(5);
-		switch(i)
-		{
-		case 0:
-			icnStop = new ImageIcon("hum1.png");
-			icnMove = new ImageIcon("hum1_move.gif");
-			break;
-		case 2:
-			icnStop = new ImageIcon("hum2.png");
-			icnMove = new ImageIcon("hum2_move.gif");
-			break;
-		case 1:
-			icnStop = new ImageIcon("hum3.png");
-			icnMove = new ImageIcon("hum3_move.gif");
-			break;
-		case 3:
-			icnStop = new ImageIcon("hum4.png");
-			icnMove = new ImageIcon("hum4_move.gif");
-			break;
-		case 4:
-			icnStop = new ImageIcon("hum5.png");
-			icnMove = new ImageIcon("hum5_move.gif");
-			break;
-
-		}
-
-		lblHum.setIcon(icnMove);
-
-		idxKeyChoice ++;
-		this.idxUnique = idxKeyChoice;
-	}
-
-	//내가 타는 층 설정
-	public void SetStartFlr(int n) {
-
-		nSflr = n;
-	}
-
-	//case마다 함수를 따로두는건 어때? 오버라이딩?
-	//case 1 - 리모컨까지
-	//case 3 - 엘베 내림
-	public void MoveSetting(int idx) {
-		//idx == 1
-		idxRun = idx;
-	}
-
-	//case 2 - move
-	//case1에서 엘베를 고른 후, posX(엘리베이터 위치)까지 이동하게 한다.
-	public void MoveSetting(int idx, int posX) {
-		//idx == 2
-		idxRun = idx;
-		nElevPosX = posX;
-	}
-
-	/*
-	//case 3 - 엘베 내림
-	public void MoveSetting(int idx, Point _p) {
-		idxRun = idx;
-		p = _p;
-	}*/
-
-	public void run() {
-
-		Remotes rmt;
-		JFrame frmRmt;
-		int i;
-		Operations o = new Operations();
+	public Humans(int getLev) {
 		
-		switch(idxRun){
-
-
-		//리모컨 선택 까지만 (엘베까지는 안감)
-		case 1:
+		startLev = getLev;
+		
+		targetLev = 0;
+		lblHum = new JLabel("<html><h1><b>&nbsp;&nbsp;</b></h1></html>");
+		lblHum.setForeground(Color.WHITE);
+		lblHum.setHorizontalTextPosition(JLabel.LEFT);
+		lblHum.setVerticalTextPosition(JLabel.TOP);
+		
+		isMoving = false;
+		
+		Random ran = new Random();
+		humSkinNo = ran.nextInt(5);
+		ImageIcon humCov = new ImageIcon("hum"+humSkinNo+"_0.png");
+		
+		lblHum.setBounds(60, convLevToY(getLev), 100, 100);
+		lblHum.setIcon(humCov);
+		new thdLive().start();
+		
+	}
+	
+	public JLabel GetLblHum() {
+		return this.lblHum;
+	}
+	
+	
+	class thdLive extends Thread {
+		Point p;
+		
+		public void run() {
+			
 			try{
 				p = lblHum.getLocation();
-				while(true)
-				{
-					Thread.sleep(200);
-					lblHum.setLocation(p.x+20, p.y);
-
-					if(nRemotePosX > p.x)
-						p = lblHum.getLocation();
-
-					else break;
-				}
-
-				//리모컨
-				rmt = new Remotes();
-				frmRmt = rmt.GetFrame();
-				frmRmt.setVisible(true);
-				lblHum.setIcon(icnStop);
-				while(rmt.nEflr < 1){
-					Thread.sleep(200);
-				}
-
-				//유저가 내릴 층을 받음
-				nEflr = rmt.nEflr;
+				Thread.sleep(500);
+				int elevNum = 0;
+				isMoving = true;
+				new thdAni().start();
 				
-				//어떤 엘리베이터를 내려줄지 골랐음
-				idxElev = o.Choice(nSflr, nEflr);
-				System.out.println(">>탈 엘베: "+idxElev);
+					
 				
-				frmRmt.dispose();
 				
-				//해당 index에 맞는 엘리베이터의 큐에 추가해준다
-				if(idxElev == 1) { //elev1
-					System.out.print("\n>>q1: ");
-					Window.q1.Add(nEflr);
+				
+				
+					for(int i = 60; i < 480; i++){
+						lblHum.setLocation(i, p.y);
+						Thread.sleep(5);
+					}
+					
+					if(Window.autoMode){
+						isMoving = false;
+						Random ran = new Random();
+						
+						
+						while(true){
+							targetLev = ran.nextInt(6) + 1;
+							if(targetLev != startLev)
+								break;
+						}
+						
+						
+					}
+					else{
+						isMoving = false;
+						Remotes a = new Remotes();
+						while(targetLev == 0){
+							targetLev = a.getLevFromPad();
+							System.out.print("");
+						}
+					}
+					
+					start = System.currentTimeMillis();
+					
+					Window.floorHumStack[startLev-1].add(getHumans());
 					
 					
-				}else if(idxElev == 2) { //elev2
-					System.out.print("\n>>q2: ");
-					Window.q2.Add(nEflr);
+					lblHum.setText("<html><h1><b>"+targetLev+"</b></h1></html>");
 					
-				}else if(idxElev == 3) { //elev3
-					System.out.print("\n>>q3: ");
-					Window.q3.Add(nEflr);
 					
+					
+					elevNum = Window.coreSystem.getElevNum(startLev, targetLev);
+					//System.out.println(elevNum);
+					
+					//elevNum = 1;
+					int destElev = 0;
+					
+					
+					
+					
+					
+					if(elevNum == 1){
+						//if(1번 엘베 도착 하고 문 열리면 )
+						while(!(Window.elev1.isDoorOpen && Window.elev1.currLevel == startLev))
+							System.out.print("");
+							
+						Window.elev1.HumStack.add(getHumans());
+						destElev = Window.ELEV_FIR - 10;
+					}
+					else if(elevNum == 2){
+						while(!(Window.elev2.isDoorOpen && Window.elev2.currLevel == startLev))
+							System.out.print("");
+						Window.elev2.HumStack.add(getHumans());
+						destElev = Window.ELEV_SEC - 10;
+					}
+					else if(elevNum == 3){
+						while(!(Window.elev3.isDoorOpen && Window.elev3.currLevel == startLev))
+							System.out.print("");
+						Window.elev3.HumStack.add(getHumans());
+						destElev = Window.ELEV_TRD - 10;
+					}
+					else{
+						for(int i = 479; i <= 1000; i++){
+							lblHum.setLocation(i, p.y);
+							Thread.sleep(5);
+						}
+						return;
+					}
+					
+					isMoving = true;
+					new thdAni().start();
+					
+					
+					for(int i = 479; i <= destElev; i++){
+						lblHum.setLocation(i, p.y);
+						Thread.sleep(5);
+					}
+					
+					lblHum.setVisible(false);
+					
+					
+				
+			}
+			catch(InterruptedException e){
+				e.printStackTrace();
+			}
+			finally{
+				lblHum.setVisible(false);
+			}
+			
+		}
+	}
+	
+	
+	public void thdLeaveStart(int inCurrElev, int inCurrLev){
+		new thdLeave(inCurrElev, inCurrLev).start();
+	}
+	
+	
+	public class thdLeave extends Thread {
+		
+		private int currElev;
+		private int currLev;
+		
+		public thdLeave(int inCurrElev, int inCurrLev){
+			currElev = inCurrElev;
+			currLev = inCurrLev;
+		}
+		
+		public void run(){
+			//after notify...
+			end = System.currentTimeMillis();
+			System.out.println("<time>" + (end-start) + "</time>");
+			Window.totalMsec += (end-start);
+			Window.totalUser++;
+			System.out.println("<tot_time>" + Window.totalMsec + "</tot_time>");
+			System.out.println("<tot_proc>" + Window.totalUser + "</tot_proc>");
+			
+			lblHum.setVisible(true);
+			new thdAni().start();
+			
+			
+			for(int i = currElev; i < 1000; i++){
+				lblHum.setLocation(i, convLevToY(currLev));
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				System.out.println(">>"+nEflr+" 까지 이동");
-
-
-				//잠시 대기
-				for(i=0; i<3; i++){
-					try {
-						Thread.sleep(200);
-						lblHum.setIcon(icnStop);
-					} catch (InterruptedException e) {
+				
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	
+	class thdAni extends Thread {
+		public void run() {
+			while(true){
+				if(isMoving){
+					try{
+						lblHum.setIcon(new ImageIcon("hum"+humSkinNo+"_1.png"));
+						Thread.sleep(300);
+						lblHum.setIcon(new ImageIcon("hum"+humSkinNo+"_0.png"));
+						Thread.sleep(300);
+					}
+					catch(InterruptedException e){
 						e.printStackTrace();
 					}
 				}
-
-
-
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-			break;
-
-
-		//리모컨~엘리베이터까지 이동
-		//필요한 변수: idx(2), ev의 좌표
-		case 2:
-			try{
-				System.out.print(">>[h.case2]Human"+lblHum.getLocation().x+", Elev: ");
-				System.out.println(nElevPosX);
-				//이어서 움직임
-				lblHum.setIcon(icnMove);
-				while(true)
-				{
-					Thread.sleep(200);
-					p = lblHum.getLocation(); //
-					lblHum.setLocation(p.x+20, p.y);
-					if(nElevPosX > p.x){
-						p = lblHum.getLocation();
-					}
-
-					else break;
+				else{
+					lblHum.setIcon(new ImageIcon("hum"+humSkinNo+"_0.png"));
+					break;
 				}
-
-				//조금 기다리고
-				for(i=0; i<3; i++){
-					Thread.sleep(200);
-					lblHum.setIcon(icnStop);
-
-				}
-				//사라진다
-
-			}catch(InterruptedException e) {
-				e.printStackTrace();
+				
 			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-			break;
-
-			
-		//엘리베이터에서 내린다
-		case 3:
-			//곧 사라질꺼
-			lblHum.setBackground(Color.WHITE);
-
-			//조금 기다리고
-			for(i=0; i<3; i++){
-				try {
-					Thread.sleep(300);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-
-				}
-			}
-
-			//사라진다
-			lblHum.setVisible(false);
-			break;
-
 		}
 	}
-
-	//flr을 입력받으면, 해당 층의 좌표를 알려준다
-	public int GetFlrPosY(int flr) { //eflr: end floor
-		int height = 610;
-		int i;
-		for(i=1; i<flr; i++)
-			height -= this.nBt;
-		System.out.println(">>height: "+height);
-		return height;
+	
+	public Humans getHumans(){
+		return this;
 	}
-
-	public JLabel GetLblHum(){
-
-		return this.lblHum;
+	
+	
+	private int convLevToY(int Lev){
+		return ((6 - Lev) * LEV_INT) + LEV_LAST;
 	}
-
+	
 }
